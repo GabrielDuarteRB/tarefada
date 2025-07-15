@@ -103,7 +103,11 @@ export default function Tasks() {
   return (
     <View >
       <Text style={styles.titulo}>TAREFAS</Text>
-      <Text style={styles.subtitulo}>Segunda</Text>
+      <Text style={styles.subtitulo}>
+        {new Date(`${date}T12:00:00`)
+          .toLocaleDateString('pt-BR', { weekday: 'long' })
+          .replace(/^./, (c) => c.toUpperCase())}
+      </Text>
 
       {/* Checkbox para mostrar tarefas concluídas */}
       <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20, marginBottom: 10 }}>
@@ -167,6 +171,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     paddingHorizontal: 20,
+    marginBottom: 10,
   },
   container: {
     backgroundColor: '#E0E0E0',
