@@ -6,6 +6,7 @@ import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 import CardsInfoTask from '../../components/Cards/InfoTask';
 import ButtonSuccess from '../../components/Button/Success';
 import Button from '../../components/Button';
+import Loader from '../../components/Loader';
 
 import { useTaskStore } from '../../stores/taskStore';
 
@@ -21,7 +22,12 @@ export default function DetalheTarefa() {
 
 
   if (Object.keys(task).length === 0) {
-    return <Text>Carregando tarefa...</Text>;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+        <Loader />
+        {/* <Text>Carregando tarefa...</Text> */}
+      </View>
+    );
   }
 
   return (

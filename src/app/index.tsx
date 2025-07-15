@@ -5,6 +5,7 @@ import { useRef, useState, useEffect } from 'react';
 import CardWeek from '../components/Cards/Week';
 import { useWeekStore } from '../stores/weekStore';
 import { useTaskStore } from '../stores/taskStore';
+import Loader from '../components/Loader';
 
 
 function gerarIntervaloDeDatas(inicio: Date, fim: Date): { data: string; semana: string }[] {
@@ -29,10 +30,16 @@ export default function Index() {
   const weekStore = useWeekStore();
   const taskStore = useTaskStore();
 
-  const { week, currentWeek } = weekStore;
+  type Week = {
+    id_semana: number;
+    data_inicio: string;
+    data_previsao_fim: string;
+    [key: string]: any;
+  };
+  const { week, currentWeek } = weekStore as { week: Week | {}; currentWeek: () => Promise<void> };
   const { tasks, findTasks } = taskStore;
 
-  const [dias, setDias] = useState([])
+  const [dias, setDias] = useState<{ data: string; semana: string }[]>([])
   const [loading, setLoading] = useState(true);
 
   const hoje = new Date();
@@ -87,15 +94,18 @@ export default function Index() {
 
   useEffect(() => {
     if(week && Object.keys(week).length > 0) {
-      const intervalo = gerarIntervaloDeDatas(new Date(week.data_inicio), new Date(week.data_previsao_fim))
-      setDias(intervalo);
+      if ('data_inicio' in week && 'data_previsao_fim' in week) {
+        const intervalo = gerarIntervaloDeDatas(new Date(week.data_inicio), new Date(week.data_previsao_fim))
+        setDias(intervalo);
+      }
     }
   }, [week]);
 
   if (loading) {
     return (
-      <View>
-        <Text style={{ marginTop: 8 }}>Carregando semana…</Text>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+        <Loader />
+        {/* <Text style={{ marginTop: 8 }}>Carregando semana…</Text> */}
       </View>
     );
   }
@@ -118,8 +128,8 @@ export default function Index() {
             <Animated.View style={[{ transform: [{ translateX: animAtual }] }]}>
               <CardWeek
                 weekName={`${dias[indexAtual].semana} - ${dias[indexAtual].data}`}
-                id={week.id_semana}
-                date={montarDataISO(dias[proximoIndex].data, week.data_inicio)}
+                id={'id_semana' in week ? week.id_semana : 0}
+                date={montarDataISO(dias[proximoIndex].data, 'data_inicio' in week ? week.data_inicio : '')}
               />
             </Animated.View>
             <Animated.View
@@ -127,8 +137,8 @@ export default function Index() {
             >
               <CardWeek
                 weekName={`${dias[proximoIndex].semana} - ${dias[proximoIndex].data}`}
-                id={week.id_semana}
-                date={montarDataISO(dias[proximoIndex].data, week.data_inicio)}
+                id={'id_semana' in week ? week.id_semana : 0}
+                date={montarDataISO(dias[proximoIndex].data, 'data_inicio' in week ? week.data_inicio : '')}
               />
             </Animated.View>
           </View>
@@ -174,5 +184,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+  },
+  loader: {
+    width: 50,
+    height: 50,
+    backgroundColor: '#514b82',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inner: {
+    width: 25,
+    height: 25,
+    backgroundColor: '#fff',
+    borderRadius: 4,
   },
 });

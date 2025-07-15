@@ -5,6 +5,7 @@ import { Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useUserStore } from '../stores/userStore';
 import { useWeekStore } from '../stores/weekStore';
+import Loader from '../components/Loader';
 
 export default function TelaPerfil() {
 
@@ -81,7 +82,12 @@ export default function TelaPerfil() {
   }, [user]);
 
   if (!user) {
-    return <Text>Carregando perfil...</Text>;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+        <Loader />
+        {/* <Text>Carregando perfil...</Text> */}
+      </View>
+    );
   }
 
   return (

@@ -4,6 +4,7 @@ import FormsTask from '../components/Forms/Task';
 import { useWeekStore } from '../stores/weekStore';
 import { useTaskStore } from '../stores/taskStore';
 import Toast from 'react-native-toast-message';
+import Loader from '../components/Loader';
 
 export default function CreateTaks() {
 
@@ -48,7 +49,12 @@ export default function CreateTaks() {
   }, []);
 
   if (!week?.data_inicio) {
-    return <Text>Carregando semana...</Text>;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+        <Loader />
+        {/* <Text>Carregando semana...</Text> */}
+      </View>
+    );
   }
 
 

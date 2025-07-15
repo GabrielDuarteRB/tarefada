@@ -13,6 +13,7 @@ import TasksListCarrossel from '../../../../components/Tasks/ListCarrossel';
 import ButtonSuccess from '../../../../components/Button/Success';
 import CardTask from '../../../../components/Cards/Task';
 import { useTaskStore } from '../../../../stores/taskStore';
+import Loader from '../../../../components/Loader';
 
 export default function Tasks() {
   const { id, date } = useLocalSearchParams();
@@ -35,8 +36,9 @@ export default function Tasks() {
 
   if (loading) {
     return (
-      <View style={{ padding: 24, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ fontSize: 18, marginBottom: 16 }}>Carregando tarefas...</Text>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+        <Loader />
+        {/* <Text style={{ fontSize: 18, marginBottom: 16 }}>Carregando tarefas...</Text> */}
       </View>
     );
   }
