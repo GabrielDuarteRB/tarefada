@@ -18,7 +18,7 @@ export default function DrawerLayout() {
   const { me } = useUserStore();
 
   useEffect(() => {
-    if (pathname === '/login') return;
+    if (pathname === '/login' || pathname === '/create_user') return;
 
     const verificar = async () => {
       try {

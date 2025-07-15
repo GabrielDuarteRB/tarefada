@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useUserStore } from '../stores/userStore';
 
 export default function LoginScreen() {
@@ -27,6 +27,13 @@ export default function LoginScreen() {
 
   return (
     <View style={styles.container}>
+
+      <Image
+        source={require('@/assets/images/card.png')}
+        style={styles.cardImage}
+        resizeMode="contain"
+      />
+
       <View style={styles.card}>
         <Text style={styles.label}>Email</Text>
         <TextInput
@@ -51,9 +58,15 @@ export default function LoginScreen() {
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity>
-          <Text style={styles.forgot}>Esqueceu a senha?</Text>
-        </TouchableOpacity>
+        <View style={styles.linkRow}>
+          <TouchableOpacity onPress={() => navigation.navigate('create_user')}>
+            <Text style={styles.linkText}>Criar novo usuário</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => Alert.alert('Recuperação', 'Funcionalidade ainda não implementada')}>
+            <Text style={styles.linkText}>Esqueceu a senha?</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -64,6 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: -108
   },
   card: {
     width: '100%',
@@ -105,5 +119,20 @@ const styles = StyleSheet.create({
     marginTop: 15,
     textAlign: 'center',
     textDecorationLine: 'underline',
+  },
+  linkRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+  },
+
+  linkText: {
+    color: '#5f019a',
+    fontWeight: '500',
+  },
+  cardImage: {
+    width: '100%',
+    height: 180,
+    marginBottom: 16,
   },
 });
