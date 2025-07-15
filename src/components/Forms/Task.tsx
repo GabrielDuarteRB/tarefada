@@ -1,12 +1,27 @@
 import { View, Text, StyleSheet, TextInput } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ButtonSuccess from '../Button/Success';
 
-export default function FormsTask({ onSubmit, week }: any) {
+export default function FormsTask({ onSubmit, week, initialDate }: any) {
 
   const [nome, setNome] = useState('');
   const [pontos, setPontos] = useState('');
-  const [dia, setDia] = useState('');
+  // Se initialDate vier no formato YYYY-MM-DD, converter para DD/MM/YYYY
+  let initialDia = '';
+  if (initialDate && typeof initialDate === 'string' && initialDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    const [ano, mes, dia] = initialDate.split('-');
+    initialDia = `${dia}/${mes}/${ano}`;
+  }
+  const [dia, setDia] = useState(initialDia);
+  // Atualizar o campo dia sempre que initialDate mudar
+  useEffect(() => {
+    let newDia = '';
+    if (initialDate && typeof initialDate === 'string' && initialDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [ano, mes, dia] = initialDate.split('-');
+      newDia = `${dia}/${mes}/${ano}`;
+    }
+    setDia(newDia);
+  }, [initialDate]);
   const [erro, setErro] = useState('');
 
   const formatarDataBR = (dataISO: string) => {

@@ -14,7 +14,7 @@ export default function TasksValidate() {
   const { id, date } = useLocalSearchParams();
 
   const taskStore = useTaskStore();
-  const { tasks, findTasks } = taskStore;
+  const { tasks, findTasks, resetTasks } = taskStore;
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -23,6 +23,7 @@ export default function TasksValidate() {
   useEffect(() => {
     setIsLoading(true);
     async function fetchTasks() {
+      resetTasks(); // Limpa tarefas antes de buscar
       const params = { id_semana: id, data_inicio: date, status: 'pendente' };
       await findTasks(params);
       setIsLoading(false);
@@ -63,7 +64,7 @@ export default function TasksValidate() {
 
       <TasksListCarrossel
         tasks={tasks}
-        renderCard={(task) => (<CardTaskValidate task={tasks[0]} />)}
+        renderCard={(task) => (<CardTaskValidate task={task} />)}
       />
 
       <Button

@@ -3,6 +3,7 @@ import {
   Text,
   StyleSheet,
   Pressable,
+  Switch,
 } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +15,7 @@ import ButtonSuccess from '../../../../../components/Button/Success';
 import CardTask from '../../../../../components/Cards/Task';
 import { useTaskStore } from '../../../../../stores/taskStore';
 import Loader from '../../../../../components/Loader';
+import { TaskInterface } from '../../../../../types/TaskInterface';
 
 export default function Tasks() {
   const { id, date } = useLocalSearchParams();
@@ -23,6 +25,7 @@ export default function Tasks() {
 
   const [cards, setCards] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   useEffect(() => {
     async function fetchTasks() {
@@ -52,7 +55,7 @@ export default function Tasks() {
         </Text>
 
         <View style={ styles.buttonContainer }>
-        <Link href="/create_task" asChild>
+        <Link href={`/create_task?date=${date}`} asChild>
           <Pressable android_ripple={{ color: '#ddd' }} style={ styles.button }>
             <Text style={{color: 'white'}} >Adicionar Tarefa</Text>
           </Pressable>
@@ -66,19 +69,55 @@ export default function Tasks() {
     );
   }
 
+  // Filtrar tarefas: não mostrar pendentes, e só mostrar concluídas se showCompleted for true
+  const filteredTasks = (tasks as TaskInterface[]).filter((task) => {
+    if (task.status === 'pendente') return false;
+    if (task.status === 'concluida' && !showCompleted) return false;
+    return true;
+  });
+
+  if (!filteredTasks.length) {
+    return (
+      <View style={{ padding: 24, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ fontSize: 18, marginBottom: 16, textAlign: 'center' }}>
+          Nenhuma tarefa disponível para esta data (todas aguardando validação).
+        </Text>
+        <View style={ styles.buttonContainer }>
+          <Link href={`/create_task?date=${date}`} asChild>
+            <Pressable android_ripple={{ color: '#ddd' }} style={ styles.button }>
+              <Text style={{color: 'white'}} >Adicionar Tarefa</Text>
+            </Pressable>
+          </Link>
+          <Link href={`/tasks/week/${id}/${date}/validate`} asChild>
+            <ButtonSuccess text="Tarefas a validar" />
+          </Link>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View >
       <Text style={styles.titulo}>TAREFAS</Text>
       <Text style={styles.subtitulo}>Segunda</Text>
 
+      {/* Checkbox para mostrar tarefas concluídas */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20, marginBottom: 10 }}>
+        <Switch
+          value={showCompleted}
+          onValueChange={setShowCompleted}
+        />
+        <Text style={{ marginLeft: 8 }}>Mostrar tarefas concluídas</Text>
+      </View>
+
       <View style={styles.container}>
         <View style={{ minHeight: 400, justifyContent: 'center' }}>
           {
             cards ?
-              <TasksCarrossel tasks={tasks} />
+              <TasksCarrossel tasks={filteredTasks} />
             :
               <TasksListCarrossel
-                tasks={tasks}
+                tasks={filteredTasks}
                 renderCard={(task) => (<CardTask title={task.titulo} />)}
               />
           }
@@ -94,13 +133,13 @@ export default function Tasks() {
 
           <Pressable style={styles.wrapperIcons} onPress={() => setCards(!cards)}>
             <Ionicons name="list-outline" size={24}></Ionicons>
-            <Text style={styles.descricaoIcons}>Lista</Text>
+            <Text style={styles.descricaoIcons}>{cards ? 'Lista' : 'Cartas'}</Text>
           </Pressable>
         </View>
       </View>
 
       <View style={ styles.buttonContainer }>
-        <Link href="/create_task" asChild>
+        <Link href={`/create_task?date=${date}`} asChild>
           <Pressable android_ripple={{ color: '#ddd' }} style={ styles.button }>
             <Text style={{color: 'white'}} >Adicionar Tarefa</Text>
           </Pressable>

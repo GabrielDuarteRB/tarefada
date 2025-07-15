@@ -5,9 +5,11 @@ import { useWeekStore } from '../stores/weekStore';
 import { useTaskStore } from '../stores/taskStore';
 import Toast from 'react-native-toast-message';
 import Loader from '../components/Loader';
+import { useLocalSearchParams } from 'expo-router';
 
 export default function CreateTaks() {
 
+  const { date } = useLocalSearchParams();
   const weekStore = useWeekStore();
   const { week, currentWeek, createWeek } = weekStore;
   const { createTaks } = useTaskStore();
@@ -63,7 +65,7 @@ export default function CreateTaks() {
       <Text style={styles.titulo}>Criar Tarefa</Text>
 
       <View style={{backgroundColor: '#E0E0E0', padding: 20}}>
-        <FormsTask onSubmit={handleSubmit} week={week} />
+        <FormsTask onSubmit={handleSubmit} week={week} initialDate={date as string} />
       </View>
       <Toast />
     </View>
