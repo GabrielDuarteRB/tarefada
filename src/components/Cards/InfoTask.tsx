@@ -221,7 +221,7 @@ export default function DetalheTarefa({ task }: props) {
         <MaterialIcons name={constantsUsed.iconButton} size={18} color={constantsUsed.text} />
       </TouchableOpacity>
 
-      {!temDono && task.status === 'pendente' && (
+      {task.id_usuario_atribuido !== user.id_usuario && task.status === 'pendente' && (
         <>
           <TouchableOpacity
             style={[styles.aceitarBtn, { backgroundColor: '#4CAF50' }]}

@@ -8,12 +8,12 @@ import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { Link } from 'expo-router';
-import TasksCarrossel from '../../../../components/Tasks/Carrossel';
-import TasksListCarrossel from '../../../../components/Tasks/ListCarrossel';
-import ButtonSuccess from '../../../../components/Button/Success';
-import CardTask from '../../../../components/Cards/Task';
-import { useTaskStore } from '../../../../stores/taskStore';
-import Loader from '../../../../components/Loader';
+import TasksCarrossel from '../../../../../components/Tasks/Carrossel';
+import TasksListCarrossel from '../../../../../components/Tasks/ListCarrossel';
+import ButtonSuccess from '../../../../../components/Button/Success';
+import CardTask from '../../../../../components/Cards/Task';
+import { useTaskStore } from '../../../../../stores/taskStore';
+import Loader from '../../../../../components/Loader';
 
 export default function Tasks() {
   const { id, date } = useLocalSearchParams();
@@ -58,7 +58,7 @@ export default function Tasks() {
           </Pressable>
         </Link>
 
-        <Link href="/tasks/validate" asChild>
+        <Link href={`/tasks/week/${id}/${date}/validate`} asChild>
             <ButtonSuccess text="Tarefas a validar" />
         </Link>
       </View>
@@ -106,7 +106,7 @@ export default function Tasks() {
           </Pressable>
         </Link>
 
-        <Link href="/tasks/validate" asChild>
+        <Link href={`/tasks/week/${id}/${date}/validate`} asChild>
             <ButtonSuccess text="Tarefas a validar" />
         </Link>
       </View>
