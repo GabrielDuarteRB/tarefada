@@ -6,8 +6,20 @@ export const weekService = {
     return response.data;
   },
 
+  async deleteCurrentWeek() {
+    const response = await api.delete('/semana/atual');
+    return response.data;
+  },
+
+  async participatedWeek(id: number) {
+    const response = await api.post(`/semana/${id}/participar`);
+    return response.data;
+  },
+
   async createWeek(dados: any) {
     const response = await api.post('/semana', dados);
     return response.data;
   },
+
+
 };
