@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import Toast from 'react-native-toast-message';
 import * as Sharing from 'expo-sharing';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type props = {
   task: TaskInterface
@@ -183,7 +184,7 @@ export default function DetalheTarefa({ task }: props) {
   }
 
   return (
-    <View
+    <SafeAreaView
       style={[
         styles.card,
         {
@@ -253,7 +254,7 @@ export default function DetalheTarefa({ task }: props) {
         </>
       )}
     <Toast />
-    </View>
+    </SafeAreaView>
   );
 }
 

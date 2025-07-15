@@ -10,6 +10,7 @@ import CustomDrawer from '../components/CustomDrawer';
 import { useUserStore } from '../stores/userStore'
 import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function DrawerLayout() {
 
@@ -45,19 +46,21 @@ export default function DrawerLayout() {
   );
 
   return (
-    <Drawer
-      drawerContent={(props) => <CustomDrawer {...props} />}
-      screenOptions={{
-        headerStyle: { backgroundColor: '#f8f8f8' },
-        headerTitle: "",
-        headerTintColor: '#333',
-        headerLeft: () => <MenuButton />,
-        headerRight: () => <BackButton />,
-      }}
-    >
-      <Drawer.Screen name="index" />
-      <Drawer.Screen name="create_week" />
-    </Drawer>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Drawer
+        drawerContent={(props) => <CustomDrawer {...props} />}
+        screenOptions={{
+          headerStyle: { backgroundColor: '#f8f8f8' },
+          headerTitle: "",
+          headerTintColor: '#333',
+          headerLeft: () => <MenuButton />,
+          headerRight: () => <BackButton />,
+        }}
+      >
+        <Drawer.Screen name="index" />
+        <Drawer.Screen name="create_week" />
+      </Drawer>
+    </SafeAreaView>
   );
 }
 
