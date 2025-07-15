@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Switch,
+  ScrollView,
 } from 'react-native';
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
@@ -101,7 +102,7 @@ export default function Tasks() {
   }
 
   return (
-    <View >
+    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
       <Text style={styles.titulo}>TAREFAS</Text>
       <Text style={styles.subtitulo}>
         {new Date(`${date}T12:00:00`)
@@ -109,17 +110,18 @@ export default function Tasks() {
           .replace(/^./, (c) => c.toUpperCase())}
       </Text>
 
-      {/* Checkbox para mostrar tarefas concluídas */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20, marginBottom: 10 }}>
+      
+
+      <View style={styles.container}>
+        {/* Checkbox para mostrar tarefas concluídas */}
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20 }}>
         <Switch
           value={showCompleted}
           onValueChange={setShowCompleted}
         />
-        <Text style={{ marginLeft: 8 }}>Mostrar tarefas concluídas</Text>
+        <Text style={{ marginLeft: 8 }}>tarefas concluídas</Text>
       </View>
-
-      <View style={styles.container}>
-        <View style={{ minHeight: 400, justifyContent: 'center' }}>
+        <View style={{ minHeight: 300, justifyContent: 'center' }}>
           {
             cards ?
               <TasksCarrossel tasks={filteredTasks} />
@@ -157,7 +159,7 @@ export default function Tasks() {
             <ButtonSuccess text="Tarefas a validar" />
         </Link>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -175,14 +177,14 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: '#E0E0E0',
-    paddingHorizontal: 16,
-    paddingVertical: 24,
+    //paddingHorizontal: 16,
+    //paddingVertical: 24,
   },
   containerIcons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    //paddingVertical: 10,
   },
   wrapperIcons: {
     flexDirection: 'row',

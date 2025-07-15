@@ -1,4 +1,4 @@
-import { StyleSheet, Animated, View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { StyleSheet, Animated, View, Text, TouchableOpacity, Pressable, ScrollView } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
@@ -124,37 +124,38 @@ export default function Index() {
   }
 
   return (
-    <View>
-      <Text style={styles.titulo}>Semanas</Text>
+    <View style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 24 }}>
+        <Text style={styles.titulo}>Semanas</Text>
 
-      {Object.keys(week).length > 0 ? (
-        <View style={styles.cardWeek}>
-          <TouchableOpacity onPress={() => animar('right')} disabled={indexAtual === 0}>
-            <Ionicons
-              name="chevron-back-outline"
-              size={48}
-              color={indexAtual === 0 ? '#ccc' : 'black'}
-            />
-          </TouchableOpacity>
+        {Object.keys(week).length > 0 ? (
+          <View style={styles.cardWeek}>
+            <TouchableOpacity onPress={() => animar('right')} disabled={indexAtual === 0}>
+              <Ionicons
+                name="chevron-back-outline"
+                size={48}
+                color={indexAtual === 0 ? '#ccc' : 'black'}
+              />
+            </TouchableOpacity>
 
-          <View style={{ overflow: 'hidden' }}>
-            <Animated.View style={[{ transform: [{ translateX: animAtual }] }]}>
-              <CardWeek
-                weekName={`${dias[indexAtual].semana} - ${dias[indexAtual].data}`}
-                id={'id_semana' in week ? week.id_semana : 0}
-                date={montarDataISO(dias[proximoIndex].data, 'data_inicio' in week ? week.data_inicio : '')}
-              />
-            </Animated.View>
-            <Animated.View
-              style={[{ position: 'absolute', transform: [{ translateX: animProximo }] }]}
-            >
-              <CardWeek
-                weekName={`${dias[proximoIndex].semana} - ${dias[proximoIndex].data}`}
-                id={'id_semana' in week ? week.id_semana : 0}
-                date={montarDataISO(dias[proximoIndex].data, 'data_inicio' in week ? week.data_inicio : '')}
-              />
-            </Animated.View>
-          </View>
+            <View style={{ overflow: 'hidden' }}>
+              <Animated.View style={[{ transform: [{ translateX: animAtual }] }]}>
+                <CardWeek
+                  weekName={`${dias[indexAtual].semana} - ${dias[indexAtual].data}`}
+                  id={'id_semana' in week ? week.id_semana : 0}
+                  date={montarDataISO(dias[proximoIndex].data, 'data_inicio' in week ? week.data_inicio : '')}
+                />
+              </Animated.View>
+              <Animated.View
+                style={[{ position: 'absolute', transform: [{ translateX: animProximo }] }]}
+              >
+                <CardWeek
+                  weekName={`${dias[proximoIndex].semana} - ${dias[proximoIndex].data}`}
+                  id={'id_semana' in week ? week.id_semana : 0}
+                  date={montarDataISO(dias[proximoIndex].data, 'data_inicio' in week ? week.data_inicio : '')}
+                />
+              </Animated.View>
+            </View>
 
           <TouchableOpacity
             onPress={() => animar('left')}
@@ -179,7 +180,8 @@ export default function Index() {
         </View>
 
       )}
-
+      
+    </ScrollView>
     </View>
   );
 }
