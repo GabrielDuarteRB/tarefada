@@ -126,7 +126,7 @@ export default function Tasks() {
             :
               <TasksListCarrossel
                 tasks={filteredTasks}
-                renderCard={(task) => (<CardTask title={task.titulo} />)}
+                renderCard={(task) => (<CardTask id={task.id_tarefa} title={task.titulo} />)}
               />
           }
         </View>

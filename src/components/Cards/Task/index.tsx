@@ -1,35 +1,43 @@
+import { useNavigation } from '@react-navigation/native';
+import { Link } from 'expo-router';
 import {  View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function CardTask({ title }: { title: string }) {
+export default function CardTask({ title, id }: { title: string, id: number | null }) {
+
+  const navigation = useNavigation();
+
+
   return (
-    <View style={styles.card}>
-      <View style={styles.cardInfos}>
-        <Ionicons
+    <Link href={`/task/${id}`} asChild>
+      <View style={styles.card}>
+        <View style={styles.cardInfos}>
+          <Ionicons
             name="checkmark-circle-outline"
             size={24}
             color={'green'}
-        />
-        <Text style={styles.title}>{title}</Text>
-      </View>
-      <View style={styles.actions}>
-        <TouchableOpacity onPress={() => console.log('Excluir Tarefa 1')}>
-          <Ionicons
-            name="trash-outline"
-            size={24}
-            color={'red'}
           />
-        </TouchableOpacity>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+        <View style={styles.actions}>
+          <TouchableOpacity onPress={() => console.log('Excluir Tarefa 1')}>
+            <Ionicons
+              name="trash-outline"
+              size={24}
+              color={'red'}
+            />
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => console.log('Editar Tarefa 1')}>
-          <Ionicons
-            name="pencil-outline"
-            size={24}
-            color={'blue'}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => console.log('Editar Tarefa 1')}>
+            <Ionicons
+              name="pencil-outline"
+              size={24}
+              color={'blue'}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </Link>
   );
 }
 
