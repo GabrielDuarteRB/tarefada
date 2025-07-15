@@ -33,6 +33,7 @@ export default function Index() {
   const { tasks, findTasks } = taskStore;
 
   const [dias, setDias] = useState([])
+  const [loading, setLoading] = useState(true);
 
   const hoje = new Date();
   const hojeFormatado = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
@@ -78,7 +79,10 @@ export default function Index() {
   }
 
   useEffect(() => {
-    currentWeek();
+    (async () => {
+      await currentWeek();
+      setLoading(false);
+    })();
   }, []);
 
   useEffect(() => {
@@ -88,9 +92,9 @@ export default function Index() {
     }
   }, [week]);
 
-  if (!dias.length) {
+  if (loading) {
     return (
-      <View >
+      <View>
         <Text style={{ marginTop: 8 }}>Carregando semana…</Text>
       </View>
     );
