@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Switch,
+  Alert
   ScrollView,
 } from 'react-native';
 import { useState, useCallback } from 'react';
@@ -18,26 +19,48 @@ import CardTask from '../../../../../components/Cards/Task';
 import { useTaskStore } from '../../../../../stores/taskStore';
 import Loader from '../../../../../components/Loader';
 import { TaskInterface } from '../../../../../types/TaskInterface';
-
 export default function Tasks() {
   const { id, date } = useLocalSearchParams();
 
   const taskStore = useTaskStore();
-  const { tasks, findTasks, resetTasks } = taskStore;
+  const { tasks, findTasks, resetTasks, deleteTask } = taskStore;
 
   const [cards, setCards] = useState(true);
   const [loading, setLoading] = useState(true);
   const [showCompleted, setShowCompleted] = useState(false);
 
+  const handleExcluir = (taskId) =>  {
+      Alert.alert(
+        'Confirmar exclusão',
+        'Tem certeza que deseja excluir esta tarefa?',
+        [
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+          },
+          {
+            text: 'Excluir',
+            style: 'destructive',
+            onPress: async () => {
+              await deleteTask(taskId);
+              await fetchTasks()
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+  }
+
+  const fetchTasks = async () => {
+    setLoading(true);
+    resetTasks();
+    const params = { id_semana: id, data_inicio: date };
+    await findTasks(params);
+    setLoading(false);
+  }
+
   useFocusEffect(
     useCallback(() => {
-      async function fetchTasks() {
-        setLoading(true);
-        resetTasks();
-        const params = { id_semana: id, data_inicio: date };
-        await findTasks(params);
-        setLoading(false);
-      }
       fetchTasks();
     }, [id, date])
   );
@@ -128,7 +151,13 @@ export default function Tasks() {
             :
               <TasksListCarrossel
                 tasks={filteredTasks}
-                renderCard={(task) => (<CardTask id={task.id_tarefa} title={task.titulo} />)}
+                renderCard={(task) => (
+                    <CardTask
+                      handleExcluir={handleExcluir}
+                      id={task.id_tarefa}
+                      title={task.titulo}
+                    />
+                  )}
               />
           }
         </View>

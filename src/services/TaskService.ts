@@ -17,6 +17,16 @@ export const taskService = {
     return response.data;
   },
 
+  async delete(id: number) {
+    const response = await api.delete(`/tarefa/${id}`);
+    return response.data;
+  },
+
+  async normalUpdateTask(id: number, body: any) {
+    const response = await api.put(`/tarefa/${id}`, body);
+    return response.data;
+  },
+
   async updateTask(id: number, body: any) {
     const response = await api.put(`/tarefa/${id}`, body, {
       headers: {
