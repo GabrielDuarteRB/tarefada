@@ -1,12 +1,28 @@
+import { useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
 import CardsInfoTask from '../../components/Cards/InfoTask';
 import ButtonSuccess from '../../components/Button/Success';
 import Button from '../../components/Button';
 
+import { useTaskStore } from '../../stores/taskStore';
+
 export default function DetalheTarefa() {
-  const tarefas = { id: 1, titulo: 'Tarefa 1', status: 'Em andamento' }
+  const { id } = useLocalSearchParams();
+
+  const taskStore = useTaskStore();
+  const { task, findOneTask } = taskStore;
+
+  useEffect(() => {
+    findOneTask(id)
+  }, []);
+
+
+  if (Object.keys(task).length === 0) {
+    return <Text>Carregando tarefa...</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -18,20 +34,20 @@ export default function DetalheTarefa() {
           <MaterialCommunityIcons name="checkbox-blank-circle" size={24} color="#D9D9D9" />
           <Text style={styles.statusText}>status</Text>
           <View style={styles.pointsBox}>
-            <Text style={styles.pointsValue}>05</Text>
+            <Text style={styles.pointsValue}>{ task?.ponto }</Text>
             <Text style={styles.pointsLabel}>pontos</Text>
           </View>
         </View>
       </View>
 
-      <CardsInfoTask task={tarefas} />
+      <CardsInfoTask task={task} />
 
-      { tarefas.status === 'Em andamento' && (
+      { task.status === 'Em andamento' && (
         <TouchableOpacity style={styles.okButton}>
           <ButtonSuccess text="enviar para validação" />
         </TouchableOpacity>
       )}
-      { tarefas.status === 'Finalizado' && (
+      { task.status === 'Finalizado' && (
         <View style={styles.btns}>
           <Button
             text="Tarefa Invalida"

@@ -59,7 +59,7 @@ export default function TasksCarrossel({ tasks } : Props) {
             {[leftIndex, centerIndex, rightIndex].map((idx, i) => {
               const isCenter = i === 1;
               return (
-                <Link href={`/task/${tasks[idx].id}`} asChild key={tasks[idx].id}>
+                <Link href={`/task/${tasks[idx].id_tarefa}`} asChild key={tasks[idx].id_tarefa}>
                   <Pressable>
                     <View
                       style={[
@@ -80,7 +80,9 @@ export default function TasksCarrossel({ tasks } : Props) {
                           isCenter && styles.cardTitleCenter,
                         ]}
                       >
-                        {tasks[idx].titulo}
+                        {tasks[idx].titulo.length > 8
+                          ? `${tasks[idx].titulo.slice(0, 8)}...`
+                          : tasks[idx].titulo}
                       </Text>
                     </View>
                   </Pressable>

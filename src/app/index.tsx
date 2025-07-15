@@ -1,8 +1,10 @@
 import { StyleSheet, Animated, View, Text, TouchableOpacity, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import CardWeek from '../components/Cards/Week';
+import { useWeekStore } from '../stores/weekStore';
+import { useTaskStore } from '../stores/taskStore';
 
 
 function gerarIntervaloDeDatas(inicio: Date, fim: Date): { data: string; semana: string }[] {
@@ -22,12 +24,16 @@ function gerarIntervaloDeDatas(inicio: Date, fim: Date): { data: string; semana:
   return datas;
 }
 
-const dataInicio = new Date(2025, 0, 5);
-const dataFim = new Date(2025, 11, 9);
-const dias = gerarIntervaloDeDatas(dataInicio, dataFim);
-const possuiSemana = true;
-
 export default function Index() {
+
+  const weekStore = useWeekStore();
+  const taskStore = useTaskStore();
+
+  const { week, currentWeek } = weekStore;
+  const { tasks, findTasks } = taskStore;
+
+  const [dias, setDias] = useState([])
+
   const hoje = new Date();
   const hojeFormatado = hoje.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
   const indexHoje = dias.findIndex((dia) => dia.data === hojeFormatado);
@@ -65,11 +71,36 @@ export default function Index() {
     });
   };
 
+  function montarDataISO(diaMes: string, referenciaISO: string): string {
+    const [dia, mes] = diaMes.split('/');
+    const [ano] = referenciaISO.split('-');
+    return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+  }
+
+  useEffect(() => {
+    currentWeek();
+  }, []);
+
+  useEffect(() => {
+    if(week && Object.keys(week).length > 0) {
+      const intervalo = gerarIntervaloDeDatas(new Date(week.data_inicio), new Date(week.data_previsao_fim))
+      setDias(intervalo);
+    }
+  }, [week]);
+
+  if (!dias.length) {
+    return (
+      <View >
+        <Text style={{ marginTop: 8 }}>Carregando semana…</Text>
+      </View>
+    );
+  }
+
   return (
     <View>
       <Text style={styles.titulo}>Semanas</Text>
 
-      {possuiSemana ? (
+      {Object.keys(week).length > 0 ? (
         <View style={styles.cardWeek}>
           <TouchableOpacity onPress={() => animar('right')} disabled={indexAtual === 0}>
             <Ionicons
@@ -83,7 +114,8 @@ export default function Index() {
             <Animated.View style={[{ transform: [{ translateX: animAtual }] }]}>
               <CardWeek
                 weekName={`${dias[indexAtual].semana} - ${dias[indexAtual].data}`}
-                id={indexAtual + 1}
+                id={week.id_semana}
+                date={montarDataISO(dias[proximoIndex].data, week.data_inicio)}
               />
             </Animated.View>
             <Animated.View
@@ -91,7 +123,8 @@ export default function Index() {
             >
               <CardWeek
                 weekName={`${dias[proximoIndex].semana} - ${dias[proximoIndex].data}`}
-                id={indexAtual + 1}
+                id={week.id_semana}
+                date={montarDataISO(dias[proximoIndex].data, week.data_inicio)}
               />
             </Animated.View>
           </View>

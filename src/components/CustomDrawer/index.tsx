@@ -2,11 +2,19 @@ import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { StyleSheet, View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 export default function CustomDrawer(props: any) {
 
   const router = useRouter();
+
+  const logout = async () => {
+    await AsyncStorage.removeItem('@token')
+
+    router.replace('/login');
+  };
 
   return (
     <DrawerContentScrollView
@@ -66,9 +74,7 @@ export default function CustomDrawer(props: any) {
             icon={({ color, size }) => (
               <Ionicons name="log-out-outline" size={size} color={color} />
             )}
-            onPress={() => {
-              alert('Você saiu do app');
-            }}
+            onPress={logout}
           />
 
         </View>

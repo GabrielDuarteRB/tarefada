@@ -1,12 +1,63 @@
-import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { useState } from 'react';
-import InputMultipleSelect from '../Input/MultipleSelect';
 import ButtonSuccess from '../Button/Success';
 
-export default function FormsTask() {
+export default function FormsTask({ onSubmit, week }: any) {
 
   const [nome, setNome] = useState('');
   const [pontos, setPontos] = useState('');
+  const [dia, setDia] = useState('');
+  const [erro, setErro] = useState('');
+
+  const handleSubmit = () => {
+    setErro('');
+
+    if (!nome.trim()) {
+      setErro('Informe o nome da tarefa.');
+      return;
+    }
+
+    if (!dia) {
+      setErro('Informe a data da tarefa.');
+      return;
+    }
+
+    const partes = dia.split('/');
+    if (partes.length !== 3) {
+      setErro('Data inválida. Use o formato DD/MM/YYYY.');
+      return;
+    }
+
+    const [diaStr, mesStr, anoStr] = partes;
+    const dataTarefa = new Date(Number(anoStr), Number(mesStr) - 1, Number(diaStr));
+    if (isNaN(dataTarefa.getTime())) {
+      setErro('Data inválida.');
+      return;
+    }
+
+    const dataInicio = new Date(week.data_inicio);
+    const dataFim = new Date(week.data_previsao_fim);
+
+    if (dataTarefa < dataInicio || dataTarefa > dataFim) {
+      setErro(`A data da tarefa deve estar entre ${week.data_inicio} e ${week.data_previsao_fim}.`);
+      return;
+    }
+
+    if (!pontos || isNaN(Number(pontos)) || Number(pontos) <= 0) {
+      setErro('Informe um valor válido para pontos.');
+      return;
+    }
+
+    onSubmit({
+      nome,
+      pontos: Number(pontos),
+      data: dia,
+    });
+
+    setNome('');
+    setPontos('');
+    setDia('');
+  };
 
   return (
     <View>
@@ -21,12 +72,18 @@ export default function FormsTask() {
       </View>
 
       <View style={styles.containerInputs}>
-        <Text style={styles.label}>Dias na Semana</Text>
-        <InputMultipleSelect
-          options={['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']}
-          placeholder="Selecione os dias"
+        <Text>Dia da tarefa:</Text>
+        <TextInput
+          value={dia}
+          onChangeText={setDia}
+          placeholder="DD/MM/YYYY"
+          style={styles.input}
         />
       </View>
+
+      {!!erro && (
+        <Text style={styles.erro}>{erro}</Text>
+      )}
 
       <View>
         <Text>Pontos:</Text>
@@ -39,10 +96,9 @@ export default function FormsTask() {
         />
       </View>
 
-      <ButtonSuccess text="Salvar Tarefa" onPress={() => alert('salvar tarefa')} />
+      <ButtonSuccess text="Salvar Tarefa" onPress={handleSubmit} />
     </View>
-  )
-
+  );
 }
 
 const styles = StyleSheet.create({
@@ -62,25 +118,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
   },
-  radioItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  radioCircle: {
-    height: 20,
-    width: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  radioInner: {
-    height: 10,
-    width: 10,
-    borderRadius: 5,
-    backgroundColor: '#007AFF',
-  },
+  erro: {
+    color: 'red',
+    marginBottom: 10,
+  }
 });
