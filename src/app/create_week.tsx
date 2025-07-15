@@ -13,7 +13,7 @@ export default function CreateWeek() {
   const weekStore = useWeekStore();
   const taskStore = useTaskStore();
   const { week, currentWeek, createWeek } = weekStore;
-  const { tasks, findTasks } = taskStore
+  const { tasks, findTasks, resetTasks } = taskStore
 
   useEffect(() => {
     async function fetchAndCreateWeek() {
@@ -31,6 +31,7 @@ export default function CreateWeek() {
         await createWeek(body);
       } else {
         const params = { id_semana: semanaAtual.id_semana };
+        resetTasks(); // Limpa as tarefas antes de buscar
         findTasks(params)
       }
     }
