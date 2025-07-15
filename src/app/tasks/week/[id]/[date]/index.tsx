@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Switch,
-  Alert
+  Alert,
   ScrollView,
 } from 'react-native';
 import { useState, useCallback } from 'react';
