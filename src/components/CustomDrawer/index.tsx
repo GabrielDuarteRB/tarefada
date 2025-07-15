@@ -3,10 +3,13 @@ import { StyleSheet, View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useUserStore } from '../../stores/userStore';
 
 
 export default function CustomDrawer(props: any) {
+
+  const userStore = useUserStore();
+  const { user } = userStore;
 
   const router = useRouter();
 
@@ -22,7 +25,7 @@ export default function CustomDrawer(props: any) {
       contentContainerStyle={{ flex: 1, paddingTop: 40 }}
     >
       <View style={{ paddingHorizontal: 20 }}>
-        <Text style={styles.usuario}>Olá, Gabriel Duarte</Text>
+        <Text style={styles.usuario}>Olá, {user.nome}</Text>
 
         <View style={styles.separacao}>
           <DrawerItem
