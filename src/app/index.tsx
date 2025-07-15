@@ -1,11 +1,13 @@
 import { StyleSheet, Animated, View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
-import { useRef, useState, useEffect } from 'react';
+import { Link, useRouter } from 'expo-router';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import CardWeek from '../components/Cards/Week';
 import { useWeekStore } from '../stores/weekStore';
 import { useTaskStore } from '../stores/taskStore';
 import Loader from '../components/Loader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 function gerarIntervaloDeDatas(inicio: Date, fim: Date): { data: string; semana: string }[] {
@@ -29,6 +31,7 @@ export default function Index() {
 
   const weekStore = useWeekStore();
   const taskStore = useTaskStore();
+  const router = useRouter();
 
   type Week = {
     id_semana: number;
@@ -85,12 +88,22 @@ export default function Index() {
     return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
   }
 
-  useEffect(() => {
-    (async () => {
-      await currentWeek();
-      setLoading(false);
-    })();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      (async () => {
+        const token = await AsyncStorage.getItem('@token');
+
+        if (!token) {
+          router.replace('/login');
+          return;
+        }
+
+        await currentWeek();
+        setLoading(false);
+      })();
+    }, [])
+  );
 
   useEffect(() => {
     if(week && Object.keys(week).length > 0) {

@@ -5,7 +5,8 @@ import {
   Pressable,
   Switch,
 } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { Link } from 'expo-router';
@@ -27,16 +28,19 @@ export default function Tasks() {
   const [loading, setLoading] = useState(true);
   const [showCompleted, setShowCompleted] = useState(false);
 
-  useEffect(() => {
-    async function fetchTasks() {
-      setLoading(true);
-      resetTasks(); // Limpa as tarefas antes de buscar
-      const params = { id_semana: id, data_inicio: date };
-      await findTasks(params);
-      setLoading(false);
-    }
-    fetchTasks();
-  }, [id, date]); // Busca novamente se id ou date mudar
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchTasks() {
+        setLoading(true);
+        resetTasks();
+        const params = { id_semana: id, data_inicio: date };
+        await findTasks(params);
+        setLoading(false);
+      }
+      fetchTasks();
+    }, [id, date])
+  );
+
 
   if (loading) {
     return (
@@ -99,7 +103,11 @@ export default function Tasks() {
   return (
     <View >
       <Text style={styles.titulo}>TAREFAS</Text>
-      <Text style={styles.subtitulo}>Segunda</Text>
+      <Text style={styles.subtitulo}>
+        {new Date(`${date}T12:00:00`)
+          .toLocaleDateString('pt-BR', { weekday: 'long' })
+          .replace(/^./, (c) => c.toUpperCase())}
+      </Text>
 
       {/* Checkbox para mostrar tarefas concluídas */}
       <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 20, marginBottom: 10 }}>
@@ -163,6 +171,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     paddingHorizontal: 20,
+    marginBottom: 10,
   },
   container: {
     backgroundColor: '#E0E0E0',

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useUserStore } from '../stores/userStore';
+import Loader from '../components/Loader';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -9,19 +10,29 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const { login } = useUserStore();
 
   const handleLogin = () => {
+    if (loading) return;
+
     setErrorMessage('');
+    setLoading(true);
 
     login({ email, senha })
       .then(() => {
+        setEmail('');
+        setSenha('');
+
         router.replace('/');
       })
       .catch((error) => {
         console.error('Login failed:', error);
         setErrorMessage('Email ou senha inválidos.');
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -54,9 +65,24 @@ export default function LoginScreen() {
 
         {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
+        {
+          loading
+            ?
+          <View style={styles.loading}>
+            <Loader />
+          </View>
+            :
+          <TouchableOpacity
+            style={[styles.button]}
+            onPress={handleLogin}
+            disabled={loading}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.buttonText}>Entrar</Text>
+          </TouchableOpacity>
+
+        }
+
 
         <View style={styles.linkRow}>
           <TouchableOpacity onPress={() => navigation.navigate('create_user')}>
@@ -134,5 +160,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 180,
     marginBottom: 16,
+  },
+  loading: {
+    padding: 12,
+    borderRadius: 5,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 48,
   },
 });
