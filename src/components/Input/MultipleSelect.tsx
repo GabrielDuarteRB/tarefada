@@ -12,18 +12,25 @@ import ButtonSuccess from '../Button/Success';
 type props = {
   options?: string[];
   placeholder?: string;
+  onChange?: (selected: string[]) => void;
 };
 
-export default function MultiSelectPicker({  options = [], placeholder = 'Selecione...' } : props) {
+export default function MultiSelectPicker({  options = [], placeholder = 'Selecione...', onChange } : props) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
   const toggleOption = (option: string) => {
-    setSelectedOptions(prev =>
-      prev.includes(option)
-        ? prev.filter(item => item !== option)
-        : [...prev, option]
-    );
+    setSelectedOptions(prev => {
+      let newSelected = [];
+      if (prev.includes(option)) {
+        newSelected = prev.filter(item => item !== option);
+      } else {
+        newSelected = [...prev, option];
+      }
+
+      if (onChange) onChange(newSelected);
+      return newSelected;
+    });
   };
 
   return (

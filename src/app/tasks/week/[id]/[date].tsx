@@ -4,24 +4,64 @@ import {
   StyleSheet,
   Pressable,
 } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
 import { Link } from 'expo-router';
-import TasksCarrossel from '../../../components/Tasks/Carrossel';
-import TasksListCarrossel from '../../../components/Tasks/ListCarrossel';
-import ButtonSuccess from '../../../components/Button/Success';
-import CardTask from '../../../components/Cards/Task';
+import TasksCarrossel from '../../../../components/Tasks/Carrossel';
+import TasksListCarrossel from '../../../../components/Tasks/ListCarrossel';
+import ButtonSuccess from '../../../../components/Button/Success';
+import CardTask from '../../../../components/Cards/Task';
+import { useTaskStore } from '../../../../stores/taskStore';
 
 export default function Tasks() {
-  const tarefas = [
-    { id: 1, titulo: 'Tarefa 1', status: "Em andamento" },
-    { id: 2, titulo: 'Tarefa 2', status: "Em andamento" },
-    { id: 3, titulo: 'Tarefa 3', status: "Em andamento" },
-    { id: 4, titulo: 'Tarefa 4', status: "Em andamento" },
-    { id: 5, titulo: 'Tarefa 5', status: "Em andamento" },
-  ];
+  const { id, date } = useLocalSearchParams();
+
+  const taskStore = useTaskStore();
+  const { tasks, findTasks } = taskStore;
 
   const [cards, setCards] = useState(true);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchTasks() {
+      setLoading(true);
+      const params = { id_semana: id, data_inicio: date };
+      await findTasks(params);
+      setLoading(false);
+    }
+    fetchTasks();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ padding: 24, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ fontSize: 18, marginBottom: 16 }}>Carregando tarefas...</Text>
+      </View>
+    );
+  }
+
+  if (!tasks.length) {
+    return (
+      <View style={{ padding: 24, flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ fontSize: 18, marginBottom: 16, textAlign: 'center' }}>
+          Nenhuma tarefa encontrada para esta data.
+        </Text>
+
+        <View style={ styles.buttonContainer }>
+        <Link href="/create_task" asChild>
+          <Pressable android_ripple={{ color: '#ddd' }} style={ styles.button }>
+            <Text style={{color: 'white'}} >Adicionar Tarefa</Text>
+          </Pressable>
+        </Link>
+
+        <Link href="/tasks/validate" asChild>
+            <ButtonSuccess text="Tarefas a validar" />
+        </Link>
+      </View>
+      </View>
+    );
+  }
 
   return (
     <View >
@@ -32,10 +72,10 @@ export default function Tasks() {
         <View style={{ minHeight: 400, justifyContent: 'center' }}>
           {
             cards ?
-              <TasksCarrossel tasks={tarefas} />
+              <TasksCarrossel tasks={tasks} />
             :
               <TasksListCarrossel
-                tasks={tarefas}
+                tasks={tasks}
                 renderCard={(task) => (<CardTask title={task.titulo} />)}
               />
           }

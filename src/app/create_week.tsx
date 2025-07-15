@@ -1,24 +1,42 @@
-import { useRef, useState } from 'react';
+import { useRef, useState,useEffect } from 'react';
 import { Animated, View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { Link } from 'expo-router';
 import ButtonSuccess from '../components/Button/Success';
 import TasksListCarrossel from '../components/Tasks/ListCarrossel';
 import CardTask from '../components/Cards/Task';
+import { useWeekStore } from '../stores/weekStore';
+import { useTaskStore } from '../stores/taskStore';
 
 const ITEM_HEIGHT = 80;
 
 export default function CreateWeek() {
-  const tasks = [
-    { id: 1, titulo: 'Tarefa 1', completed: false },
-    { id: 2, titulo: 'Tarefa 2', completed: true },
-    { id: 3, titulo: 'Tarefa 3', completed: false },
-    { id: 4, titulo: 'Tarefa 4', completed: true },
-    { id: 5, titulo: 'Tarefa 5', completed: false },
-    { id: 6, titulo: 'Tarefa 6', completed: true },
-    { id: 7, titulo: 'Tarefa 7', completed: false },
-    { id: 8, titulo: 'Tarefa 8', completed: true },
-    { id: 9, titulo: 'Tarefa 9', completed: false },
-  ];
+  const weekStore = useWeekStore();
+  const taskStore = useTaskStore();
+  const { week, currentWeek, createWeek } = weekStore;
+  const { tasks, findTasks } = taskStore
+
+  useEffect(() => {
+    async function fetchAndCreateWeek() {
+      await currentWeek();
+
+      const { week: semanaAtual }: any = useWeekStore.getState();
+
+      if (Object.keys(semanaAtual).length === 0) {
+        const hoje = new Date()
+
+        const body = {
+          data_inicio: hoje,
+        };
+
+        await createWeek(body);
+      } else {
+        const params = { id_semana: semanaAtual.id_semana };
+        findTasks(params)
+      }
+    }
+
+    fetchAndCreateWeek();
+  }, []);
 
   return (
     <View>

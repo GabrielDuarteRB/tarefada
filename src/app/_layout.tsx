@@ -1,10 +1,40 @@
-import { Drawer } from 'expo-router/drawer';
-import CustomDrawer from '../components/CustomDrawer';
+'use client';
+
+import { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
+import { Drawer } from 'expo-router/drawer';
+import { Slot, useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, DrawerActions } from '@react-navigation/native';
+import { useNavigation, DrawerActions, useRoute } from '@react-navigation/native';
+import CustomDrawer from '../components/CustomDrawer';
+import { useUserStore } from '../stores/userStore'
 
 export default function DrawerLayout() {
+
+  const navigation = useNavigation();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const { me } = useUserStore();
+
+  useEffect(() => {
+    if (pathname === '/login') return;
+
+    const verificar = async () => {
+      try {
+        await me();
+      } catch (error) {
+        router.push("/login")
+      }
+    }
+
+    verificar();
+  }, [navigation]);
+
+  // if (pathname === '/login') {
+  //   return <Slot />;
+  // }
+
   return (
     <Drawer
       drawerContent={(props) => <CustomDrawer {...props} />}

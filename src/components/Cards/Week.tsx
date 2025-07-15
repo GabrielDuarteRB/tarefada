@@ -4,11 +4,12 @@ import { Link } from 'expo-router';
 type props = {
   id: number,
   weekName: string,
+  date: string
 }
 
-export default function CardWeek({ weekName, id } : props) {
+export default function CardWeek({ weekName, id, date } : props) {
   return (
-    <Link href={`/tasks/week/${id}`} asChild>
+    <Link href={`/tasks/week/${id}/${date}`} asChild>
       <Pressable style={styles.cardWeek}>
         <Text style={styles.cardWeekTitulo}>{weekName}</Text>
 
