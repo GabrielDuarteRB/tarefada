@@ -3,7 +3,12 @@ import { useState, useEffect } from 'react';
 import ButtonSuccess from '../Button/Success';
 import Loader from '../Loader';
 
-export default function FormsTask({ onSubmit, week, initialDate }: any) {
+export default function FormsTask({
+  onSubmit,
+  week,
+  initialDate,
+  task
+ }: any) {
 
   const [nome, setNome] = useState('');
   const [pontos, setPontos] = useState('');
@@ -25,6 +30,14 @@ export default function FormsTask({ onSubmit, week, initialDate }: any) {
     }
     setDia(newDia);
   }, [initialDate]);
+
+  useEffect(() => {
+    if (task) {
+      setNome(task.titulo || '');
+      setPontos(task.ponto || '');
+    }
+  }, [task]);
+
   const [erro, setErro] = useState('');
 
   const formatarDataBR = (dataISO: string) => {
