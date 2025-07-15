@@ -18,7 +18,11 @@ export const taskService = {
   },
 
   async updateTask(id: number, body: any) {
-    const response = await api.patch(`/tarefa/${id}`, body);
+    const response = await api.put(`/tarefa/${id}`, body, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
     return response.data;
   }
 };

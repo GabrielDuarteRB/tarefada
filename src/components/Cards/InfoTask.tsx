@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert,  } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { TaskInterface } from '../../types/TaskInterface';
 import * as ImagePicker from 'expo-image-picker';
@@ -21,6 +22,8 @@ export default function DetalheTarefa({ task }: props) {
 
   const { updateTask } = taskStore;
   const { user } = userStore;
+
+  const [isUploading, setIsUploading] = useState(false);
 
   const contants = {
     "recusada": {
@@ -64,52 +67,57 @@ export default function DetalheTarefa({ task }: props) {
   }
 
   async function handleEnviarComprovante() {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(
-        'Permissão negada',
-        'É necessário permitir o acesso à galeria para enviar um comprovante.',
-        [{ text: 'OK' }]
-      );
+    if (isUploading) {
+      console.log('Upload em andamento, ignorando clique');
       return;
     }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-      base64: false
-    });
-
-    if (result.canceled) {
-      Alert.alert('Cancelado', 'Nenhuma imagem foi selecionada.');
-      return;
-    }
-
-    console.log('Imagem selecionada:', result);
-    const asset = result.assets[0];
-
+    setIsUploading(true);
 
     try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Permissão negada',
+          'É necessário permitir o acesso à galeria para enviar um comprovante.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+
+      const { canceled, assets} = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+        base64: false
+      });
+
+      if (canceled) {
+        Alert.alert('Cancelado', 'Nenhuma imagem foi selecionada.');
+        return;
+      }
+
+      const file = assets[0];
+      const fileName = file.uri.split('/').pop(); // "4326456d-...jpeg"
+      const extension = fileName?.split('.').pop()?.toLowerCase();
 
       const formData = new FormData();
+
+      console.log({
+        uri: assets[0].uri,
+        name: fileName,
+        type: 'image/' + extension
+      })
       formData.append('comprovante', {
-        uri: asset.uri,
-        name: asset.fileName || 'comprovante.jpg',
-        type: asset.type || 'image/jpeg',
+        uri: assets[0].uri,
+        name: fileName,
+        type: 'image/' + extension,
       } as any);
       formData.append('id_usuario_atribuido', String(user.id_usuario));
       formData.append('status', 'pendente');
-      const body = {
-        comprovante: asset,
-        id_usuario_atribuido: user.id_usuario,
-        status: 'pendente',
-      };
 
       await updateTask(task.id_tarefa, formData);
 
-      console.log('Enviando comprovante:', body);
       Toast.show({
         type: 'success',
         text1: 'Sucesso',
@@ -124,6 +132,8 @@ export default function DetalheTarefa({ task }: props) {
     } catch (error) {
       Alert.alert('Erro', 'Ocorreu um erro ao processar o comprovante.');
       console.error(error);
+    } finally {
+      setIsUploading(false);
     }
   }
 
@@ -217,6 +227,7 @@ export default function DetalheTarefa({ task }: props) {
             handleEnviarComprovante();
           }
         }}
+        disabled={isUploading}
       >
         <Text style={[styles.comprovanteText, { color: constantsUsed.text }]}>
           {constantsUsed.textButton}
