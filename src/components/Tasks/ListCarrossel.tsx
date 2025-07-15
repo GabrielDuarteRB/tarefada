@@ -61,7 +61,7 @@ export default function TasksListCarrossel({ tasks, renderCard } : Props) {
             }}
           >
             {tasks.map((task) => (
-              <View key={task.id} style={{ height: ITEM_HEIGHT }}>
+              <View key={task.id_tarefa} style={{ height: ITEM_HEIGHT }}>
                 {renderCard(task)}
               </View>
             ))}

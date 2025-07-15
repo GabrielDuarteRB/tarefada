@@ -9,7 +9,7 @@ type Props = {
 
 export default function CardTaskValidate({ task } : Props) {
   return (
-    <Link href={`/task/${task.id}`} asChild>
+    <Link href={`/task/${task.id_tarefa}`} asChild>
       <Pressable style={styles.card}>
         <Text>13/04/2023, 11:32</Text>
         <View style={styles.cardInfos}>
