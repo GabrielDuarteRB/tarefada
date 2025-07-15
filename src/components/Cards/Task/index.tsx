@@ -1,43 +1,43 @@
 import { useNavigation } from '@react-navigation/native';
-import { Link } from 'expo-router';
-import {  View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTaskStore } from '../../../stores/taskStore';
 
-export default function CardTask({ title, id }: { title: string, id: number | null }) {
+type Props = {
+  title: string;
+  id: number | null;
+  handleExcluir: (id: number | null) => void;
+};
 
+export default function CardTask({ title, id, handleExcluir }: Props) {
   const navigation = useNavigation();
+
+  function handleCardPress() {
+    navigation.navigate('task/[id]', { id });
+  }
+
+  function handleEditar() {
+    navigation.navigate('edit_task/[id]', { id });
+  }
 
 
   return (
-    <Link href={`/task/${id}`} asChild>
-      <View style={styles.card}>
-        <View style={styles.cardInfos}>
-          <Ionicons
-            name="checkmark-circle-outline"
-            size={24}
-            color={'green'}
-          />
-          <Text style={styles.title}>{title}</Text>
-        </View>
-        <View style={styles.actions}>
-          <TouchableOpacity onPress={() => console.log('Excluir Tarefa 1')}>
-            <Ionicons
-              name="trash-outline"
-              size={24}
-              color={'red'}
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => console.log('Editar Tarefa 1')}>
-            <Ionicons
-              name="pencil-outline"
-              size={24}
-              color={'blue'}
-            />
-          </TouchableOpacity>
-        </View>
+    <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={handleCardPress}>
+      <View style={styles.cardInfos}>
+        <Ionicons name="checkmark-circle-outline" size={24} color={'green'} />
+        <Text style={styles.title}>{title}</Text>
       </View>
-    </Link>
+
+      <View style={styles.actions}>
+        <TouchableOpacity onPress={() => handleExcluir(id)}>
+          <Ionicons name="trash-outline" size={24} color={'red'} />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleEditar}>
+          <Ionicons name="pencil-outline" size={24} color={'blue'} />
+        </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
   );
 }
 
