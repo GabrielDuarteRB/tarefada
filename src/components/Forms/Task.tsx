@@ -1,19 +1,22 @@
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import { useState, useEffect } from 'react';
 import ButtonSuccess from '../Button/Success';
+import Loader from '../Loader';
 
 export default function FormsTask({ onSubmit, week, initialDate }: any) {
 
   const [nome, setNome] = useState('');
   const [pontos, setPontos] = useState('');
-  // Se initialDate vier no formato YYYY-MM-DD, converter para DD/MM/YYYY
+  const [loading, setLoading] = useState(false);
+
   let initialDia = '';
   if (initialDate && typeof initialDate === 'string' && initialDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
     const [ano, mes, dia] = initialDate.split('-');
     initialDia = `${dia}/${mes}/${ano}`;
   }
+
   const [dia, setDia] = useState(initialDia);
-  // Atualizar o campo dia sempre que initialDate mudar
+
   useEffect(() => {
     let newDia = '';
     if (initialDate && typeof initialDate === 'string' && initialDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
@@ -34,7 +37,8 @@ export default function FormsTask({ onSubmit, week, initialDate }: any) {
     return new Date(ano, mes - 1, dia);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (loading) return;
     setErro('');
 
     if (!nome.trim()) {
@@ -75,16 +79,22 @@ export default function FormsTask({ onSubmit, week, initialDate }: any) {
       setErro('Informe um valor válido para pontos.');
       return;
     }
+    setLoading(true);
+    try {
+      await onSubmit({
+        nome,
+        pontos: Number(pontos),
+        data: dia,
+      });
 
-    onSubmit({
-      nome,
-      pontos: Number(pontos),
-      data: dia,
-    });
-
-    setNome('');
-    setPontos('');
-    setDia('');
+      setNome('');
+      setPontos('');
+      setDia('');
+    } catch (e) {
+      setErro('Erro ao salvar. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -124,7 +134,13 @@ export default function FormsTask({ onSubmit, week, initialDate }: any) {
         />
       </View>
 
-      <ButtonSuccess text="Salvar Tarefa" onPress={handleSubmit} />
+      {loading ? (
+        <View style={styles.loaderWrapper}>
+          <Loader />
+        </View>
+      ) : (
+        <ButtonSuccess text="Salvar Tarefa" onPress={handleSubmit} />
+      )}
     </View>
   );
 }
@@ -149,5 +165,10 @@ const styles = StyleSheet.create({
   erro: {
     color: 'red',
     marginBottom: 10,
-  }
+  },
+  loaderWrapper: {
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

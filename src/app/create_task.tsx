@@ -26,7 +26,7 @@ export default function CreateTaks() {
       data_inicio: `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`
     }
 
-    createTaks(body)
+    return createTaks(body)
       .then(() => {
         Toast.show({
           type: 'success',
