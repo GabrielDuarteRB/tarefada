@@ -10,18 +10,19 @@ import Loader from '../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-function gerarIntervaloDeDatas(inicio: Date, fim: Date): { data: string; semana: string }[] {
+function gerarSeteDias(inicio: Date): { data: string; semana: string }[] {
   const datas = [];
-  const dataAtual = new Date(inicio);
   const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
-  while (dataAtual <= fim) {
-    const dia = dataAtual.getDate().toString().padStart(2, '0');
-    const mes = (dataAtual.getMonth() + 1).toString().padStart(2, '0');
-    const nomeSemana = diasSemana[dataAtual.getDay()];
+  for (let i = 0; i < 7; i++) {
+    const data = new Date(inicio);
+    data.setDate(inicio.getDate() + i);
+
+    const dia = data.getDate().toString().padStart(2, '0');
+    const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+    const nomeSemana = diasSemana[data.getDay()];
 
     datas.push({ data: `${dia}/${mes}`, semana: nomeSemana });
-    dataAtual.setDate(dataAtual.getDate() + 1);
   }
 
   return datas;
@@ -88,6 +89,11 @@ export default function Index() {
     return `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
   }
 
+  function criarDataLocal(dateStr: string): Date {
+    const [ano, mes, dia] = dateStr.split('-').map(Number);
+    return new Date(ano, mes - 1, dia);
+  }
+
   useFocusEffect(
     useCallback(() => {
       setLoading(true);
@@ -108,7 +114,8 @@ export default function Index() {
   useEffect(() => {
     if(week && Object.keys(week).length > 0) {
       if ('data_inicio' in week && 'data_previsao_fim' in week) {
-        const intervalo = gerarIntervaloDeDatas(new Date(week.data_inicio), new Date(week.data_previsao_fim))
+        const dataInicio = criarDataLocal(week.data_inicio);
+        const intervalo = gerarSeteDias(dataInicio)
         setDias(intervalo);
       }
     }
