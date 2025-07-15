@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Drawer } from 'expo-router/drawer';
 import { Slot, useRouter, usePathname } from 'expo-router';
@@ -8,6 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, DrawerActions, useRoute } from '@react-navigation/native';
 import CustomDrawer from '../components/CustomDrawer';
 import { useUserStore } from '../stores/userStore'
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function DrawerLayout() {
 
@@ -17,23 +19,30 @@ export default function DrawerLayout() {
 
   const { me } = useUserStore();
 
-  useEffect(() => {
-    if (pathname === '/login' || pathname === '/create_user') return;
+  useFocusEffect(
+    useCallback(() => {
+      if (pathname === '/login' || pathname === '/create_user') return;
 
-    const verificar = async () => {
-      try {
-        await me();
-      } catch (error) {
-        router.push("/login")
-      }
-    }
+      let isActive = true;
 
-    verificar();
-  }, [navigation]);
+      (async () => {
+        try {
+          const token = await AsyncStorage.getItem('@token');
 
-  // if (pathname === '/login') {
-  //   return <Slot />;
-  // }
+          if (!token) {
+            router.replace('/login');
+            return;
+          }
+
+          await me();
+        } catch {
+          if (isActive) router.push('/login');
+        }
+      })();
+
+      return () => { isActive = false; };
+    }, [pathname])
+  );
 
   return (
     <Drawer

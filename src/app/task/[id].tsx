@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
@@ -15,13 +16,21 @@ export default function DetalheTarefa() {
 
   const taskStore = useTaskStore();
   const { task, findOneTask } = taskStore;
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    findOneTask(id)
-  }, []);
+    useFocusEffect(
+      useCallback(() => {
+        setIsLoading(true);
+        async function fetchTask() {
+          await findOneTask(id);
+          setIsLoading(false);
+        }
+        fetchTask();
+      }, [id])
+    );
 
 
-  if (Object.keys(task).length === 0) {
+  if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
         <Loader />

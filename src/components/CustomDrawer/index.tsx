@@ -1,5 +1,6 @@
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { StyleSheet, View, Text } from 'react-native';
+import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,15 +10,19 @@ import { useUserStore } from '../../stores/userStore';
 export default function CustomDrawer(props: any) {
 
   const userStore = useUserStore();
+  const navigation = useNavigation();
+
   const { user } = userStore;
 
   const router = useRouter();
 
+
   const logout = async () => {
-    await AsyncStorage.removeItem('@token')
+    await AsyncStorage.removeItem('@token');
 
     router.replace('/login');
   };
+
 
   return (
     <DrawerContentScrollView

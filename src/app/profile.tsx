@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import Toast from 'react-native-toast-message';
 import { View, Text, StyleSheet, TouchableOpacity,TextInput } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useUserStore } from '../stores/userStore';
@@ -12,10 +13,11 @@ export default function TelaPerfil() {
   const userStore = useUserStore();
   const weekStore = useWeekStore();
 
-  const [codigoSemana, setCodigoSemana] = React.useState('');
-
   const { user } = userStore;
   const { week, currentWeek, deleteCurrentWeek } = weekStore;
+
+  const [codigoSemana, setCodigoSemana] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const confirmarDesvinculo = () => {
     Alert.alert(
@@ -73,19 +75,22 @@ export default function TelaPerfil() {
     }
   }
 
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      (async () => {
+        if (user) {
+          await weekStore.currentWeek();
+          setLoading(false);
+        }
+      })();
+    }, [user])
+  );
 
-
-  useEffect(() => {
-    if(user) {
-      currentWeek();
-    }
-  }, [user]);
-
-  if (!user) {
+  if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
         <Loader />
-        {/* <Text>Carregando perfil...</Text> */}
       </View>
     );
   }
