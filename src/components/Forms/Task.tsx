@@ -9,6 +9,16 @@ export default function FormsTask({ onSubmit, week }: any) {
   const [dia, setDia] = useState('');
   const [erro, setErro] = useState('');
 
+  const formatarDataBR = (dataISO: string) => {
+    const [ano, mes, dia] = dataISO.split('-');
+    return `${dia}/${mes}/${ano}`;
+  };
+
+  const parseISODateLocal = (iso: string) => {
+    const [ano, mes, dia] = iso.split('-').map(Number);
+    return new Date(ano, mes - 1, dia);
+  };
+
   const handleSubmit = () => {
     setErro('');
 
@@ -35,11 +45,14 @@ export default function FormsTask({ onSubmit, week }: any) {
       return;
     }
 
-    const dataInicio = new Date(week.data_inicio);
-    const dataFim = new Date(week.data_previsao_fim);
+
+    const dataInicio = parseISODateLocal(week.data_inicio);
+    const dataFim    = parseISODateLocal(week.data_previsao_fim);
 
     if (dataTarefa < dataInicio || dataTarefa > dataFim) {
-      setErro(`A data da tarefa deve estar entre ${week.data_inicio} e ${week.data_previsao_fim}.`);
+      setErro(
+        `A data da tarefa deve estar entre ${formatarDataBR(week.data_inicio)} e ${formatarDataBR(week.data_previsao_fim)}.`
+      );
       return;
     }
 
@@ -61,6 +74,10 @@ export default function FormsTask({ onSubmit, week }: any) {
 
   return (
     <View>
+      {!!erro && (
+        <Text style={styles.erro}>{erro}</Text>
+      )}
+
       <View style={styles.containerInputs}>
         <Text style={styles.label}>Nome da Tarefa</Text>
         <TextInput
@@ -80,10 +97,6 @@ export default function FormsTask({ onSubmit, week }: any) {
           style={styles.input}
         />
       </View>
-
-      {!!erro && (
-        <Text style={styles.erro}>{erro}</Text>
-      )}
 
       <View>
         <Text>Pontos:</Text>

@@ -5,6 +5,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { useTaskStore } from '../../stores/taskStore';
 import { useUserStore } from '../../stores/userStore';
 import { useNavigation } from '@react-navigation/native';
+import * as FileSystem from 'expo-file-system';
+import Toast from 'react-native-toast-message';
+import * as Sharing from 'expo-sharing';
 
 type props = {
   task: TaskInterface
@@ -20,7 +23,7 @@ export default function DetalheTarefa({ task }: props) {
   const { user } = userStore;
 
   const contants = {
-    "em andamento": {
+    "recusada": {
       bodyCard: "#5f019a",
       borderCard: "#f97316",
       text: "#fff",
@@ -34,7 +37,7 @@ export default function DetalheTarefa({ task }: props) {
       textButton: "Comprovante",
       iconButton: "add-to-photos"
     },
-    "finalizado": {
+    "concluida": {
       bodyCard: "#F2620E",
       borderCard: "#5f019a",
       text: "#000",
@@ -51,6 +54,9 @@ export default function DetalheTarefa({ task }: props) {
   };
 
   const constantsUsed = contants[task.status];
+
+  const ehDono = task.id_usuario_atribuido === user.id_usuario;
+  const temDono = task.id_usuario_atribuido !== null && task.id_usuario_atribuido !== undefined;
 
   function formatarDataBR(dataISO: string): string {
     const [ano, mes, dia] = dataISO.split('-');
@@ -98,17 +104,68 @@ export default function DetalheTarefa({ task }: props) {
         status: 'pendente',
       };
 
-      updateTask(task.id_tarefa, formData)
+      await updateTask(task.id_tarefa, formData)
 
       console.log('Enviando comprovante:', body);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "index" }],
+      Toast.show({
+        type: 'success',
+        text1: 'Sucesso',
+        text2: 'Tarefa concluida com sucesso! 👏',
+        position: 'top',
+        visibilityTime: 3000,
+        onHide: () => {
+          navigation.goBack();
+        }
       });
 
     } catch (error) {
       Alert.alert('Erro', 'Ocorreu um erro ao processar o comprovante.');
       console.error(error);
+    }
+  }
+
+  async function handleAceitarOuRecusarTarefa(status: 'concluida' | 'recusada', toatstMessage: string) {
+    try {
+      await updateTask(task.id_tarefa, {
+        status,
+      });
+      Toast.show({
+        type: 'success',
+        text1: 'Sucesso',
+        text2: toatstMessage,
+        position: 'top',
+        visibilityTime: 3000,
+        onHide: () => {
+          navigation.goBack();
+        }
+      });
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível aceitar a tarefa.');
+      console.error(error);
+    }
+  }
+
+
+  async function abrirComprovante(base64: string | null) {
+    if (!base64) {
+      Alert.alert('Erro', 'Nenhum comprovante foi enviado.');
+      return;
+    }
+
+    try {
+      const caminho = `${FileSystem.cacheDirectory}comprovante.jpg`;
+      await FileSystem.writeAsStringAsync(caminho, base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(caminho);
+      } else {
+        Alert.alert('Erro', 'Recurso de compartilhamento indisponível.');
+      }
+    } catch (err) {
+      Alert.alert('Erro', 'Erro ao tentar abrir o comprovante.');
+      console.error(err);
     }
   }
 
@@ -132,6 +189,14 @@ export default function DetalheTarefa({ task }: props) {
 
       <Text style={[styles.cardText, { color: constantsUsed.text }]}>Dia: {formatarDataBR(task.data_inicio)}</Text>
       <Text style={[styles.cardText, { color: constantsUsed.text }]}>Status: {task.status}</Text>
+      <Text style={[styles.cardText, { color: constantsUsed.text }]}>
+        Atribuído:{' '}
+        {task.id_usuario_atribuido === null || task.id_usuario_atribuido === undefined
+          ? 'Sem atribuição'
+          : task.id_usuario_atribuido === user.id_usuario
+          ? 'Esta tarefa é sua'
+          : 'Pertence a outro participante'}
+      </Text>
 
       <View style={[styles.cardDivider, { borderBottomColor: constantsUsed.text }]} />
 
@@ -140,11 +205,40 @@ export default function DetalheTarefa({ task }: props) {
           styles.comprovanteBtn,
           { backgroundColor: constantsUsed.borderCard }
         ]}
-        onPress={handleEnviarComprovante}
+        onPress={() => {
+          if (ehDono && task.status === 'recusada') {
+            handleEnviarComprovante();
+          } else if (temDono || task.status === 'pendente') {
+            abrirComprovante(task.comprovante);
+          } else {
+            handleEnviarComprovante();
+          }
+        }}
       >
-        <Text style={[styles.comprovanteText, { color: constantsUsed.text }]}>{constantsUsed.textButton}</Text>
+        <Text style={[styles.comprovanteText, { color: constantsUsed.text }]}>
+          {constantsUsed.textButton}
+        </Text>
         <MaterialIcons name={constantsUsed.iconButton} size={18} color={constantsUsed.text} />
       </TouchableOpacity>
+
+      {!temDono && task.status === 'pendente' && (
+        <>
+          <TouchableOpacity
+            style={[styles.aceitarBtn, { backgroundColor: '#4CAF50' }]}
+            onPress={() => handleAceitarOuRecusarTarefa('concluida', 'Tarefa aceita com sucesso! 👏')}
+          >
+            <Text style={styles.aceitarText}>Aceitar Tarefa</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.recusarBtn, { backgroundColor: '#D32F2F', marginTop: 10 }]}
+            onPress={() => handleAceitarOuRecusarTarefa('recusada', 'Tarefa recusada com sucesso!')}
+          >
+            <Text style={styles.recusarText}>Recusar Tarefa</Text>
+          </TouchableOpacity>
+        </>
+      )}
+    <Toast />
     </View>
   );
 }
@@ -202,5 +296,27 @@ const styles = StyleSheet.create({
   enviarText: {
     fontWeight: 'bold',
     marginRight: 8,
+  },
+  aceitarBtn: {
+    padding: 16,
+    borderRadius: 6,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  aceitarText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  recusarBtn: {
+    padding: 16,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+
+  recusarText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
