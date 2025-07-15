@@ -13,6 +13,7 @@ interface UseStore {
   user: Usuario,
   carregarUsuarios: () => Promise<void>;
   login: (body: UserLoginInterface) => Promise<void>;
+  create: (body: any) => Promise<void>;
   me: () => Promise<void>;
 }
 
@@ -26,6 +27,9 @@ export const useUserStore = create<UseStore>((set) => ({
     const dados = await userService.login(body);
     await AsyncStorage.setItem('@token', dados.access_token);
     set({ user: dados });
+  },
+  create: async (body: any) => {
+    await userService.create(body);
   },
   me: async () => {
     const dados = await userService.me();

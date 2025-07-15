@@ -12,8 +12,8 @@ export const userService = {
     return response.data;
   },
 
-  async criar(dados: any) {
-    const response = await api.post('/usuario', dados);
+  async create(dados: any) {
+    const response = await api.post('/usuario/create', dados);
     return response.data;
   },
 
