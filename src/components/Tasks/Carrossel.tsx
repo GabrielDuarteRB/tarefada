@@ -43,6 +43,31 @@ export default function TasksCarrossel({ tasks } : Props) {
   const centerIndex = getIndex(indexAtual);
   const rightIndex = getIndex(indexAtual + 1);
 
+  if (tasks.length < 3) {
+    return (
+      <View style={styles.container}>
+        {tasks.map((task) => (
+          <Link href={`/task/${task.id_tarefa}`} asChild key={task.id_tarefa}>
+            <Pressable>
+              <View style={[styles.cardWrapper, styles.cardWrapperCenter]}>
+                <Image
+                  source={require('@/assets/images/card.png')}
+                  style={[styles.cardImageCenter]}
+                />
+                <Text style={[styles.cardTitle, styles.cardTitleCenter]}>
+                  {task.titulo.length > 8
+                    ? `${task.titulo.slice(0, 8)}...`
+                    : task.titulo}
+                </Text>
+              </View>
+            </Pressable>
+          </Link>
+        ))}
+      </View>
+    );
+  }
+
+
   return (
     <View style={styles.container}>
         <TouchableOpacity onPress={() => animar('right')}>

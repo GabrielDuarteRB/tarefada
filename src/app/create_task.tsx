@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import FormsTask from '../components/Forms/Task';
 import { useWeekStore } from '../stores/weekStore';
 import { useTaskStore } from '../stores/taskStore';
+import Toast from 'react-native-toast-message';
 
 export default function CreateTaks() {
 
@@ -24,10 +25,17 @@ export default function CreateTaks() {
 
     createTaks(body)
       .then(() => {
-        console.log('Tarefa criada com sucesso!');
+        Toast.show({
+          type: 'success',
+          text1: 'Tarefa criada!',
+          text2: 'Você pode cadastrar outra se quiser.'
+        });
       })
       .catch((error) => {
-        console.error('Erro ao criar tarefa:', error);
+        Toast.show({
+          type: 'error',
+          text1: 'Tente cadastrar novamente!',
+        });
       });
   };
 
@@ -51,7 +59,9 @@ export default function CreateTaks() {
       <View style={{backgroundColor: '#E0E0E0', padding: 20}}>
         <FormsTask onSubmit={handleSubmit} week={week} />
       </View>
+      <Toast />
     </View>
+
   )
 
 }
