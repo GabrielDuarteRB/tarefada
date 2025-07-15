@@ -19,7 +19,7 @@ export default function Tasks() {
   const { id, date } = useLocalSearchParams();
 
   const taskStore = useTaskStore();
-  const { tasks, findTasks } = taskStore;
+  const { tasks, findTasks, resetTasks } = taskStore;
 
   const [cards, setCards] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -27,12 +27,13 @@ export default function Tasks() {
   useEffect(() => {
     async function fetchTasks() {
       setLoading(true);
+      resetTasks(); // Limpa as tarefas antes de buscar
       const params = { id_semana: id, data_inicio: date };
       await findTasks(params);
       setLoading(false);
     }
     fetchTasks();
-  }, []);
+  }, [id, date]); // Busca novamente se id ou date mudar
 
   if (loading) {
     return (

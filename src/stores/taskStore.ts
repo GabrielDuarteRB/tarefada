@@ -9,6 +9,7 @@ interface UseStore {
   createTaks: (body: any) => Promise<void>;
   findOneTask: (id: any) => Promise<void>;
   updateTask: (id: any, body: any) => Promise<void>;
+  resetTasks: () => void;
 }
 
 export const useTaskStore = create<UseStore>((set) => ({
@@ -27,5 +28,7 @@ export const useTaskStore = create<UseStore>((set) => ({
   },
   updateTask: async (id, body) => {
    await taskService.updateTask(id, body);
-  }
+  },
+  // Adicionado para limpar o array de tarefas
+  resetTasks: () => set({ tasks: [] }),
 }));
