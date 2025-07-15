@@ -53,7 +53,7 @@ export default function DetalheTarefa({ task }: props) {
     },
   };
 
-  const constantsUsed = contants[task.status];
+  const constantsUsed = contants[task.status as keyof typeof contants];
 
   const ehDono = task.id_usuario_atribuido === user.id_usuario;
   const temDono = task.id_usuario_atribuido !== null && task.id_usuario_atribuido !== undefined;
@@ -94,9 +94,12 @@ export default function DetalheTarefa({ task }: props) {
     try {
 
       const formData = new FormData();
-
-      formData.append('comprovante', asset.file);
-      formData.append('id_usuario_atribuido', user.id_usuario);
+      formData.append('comprovante', {
+        uri: asset.uri,
+        name: asset.fileName || 'comprovante.jpg',
+        type: asset.type || 'image/jpeg',
+      } as any);
+      formData.append('id_usuario_atribuido', String(user.id_usuario));
       formData.append('status', 'pendente');
       const body = {
         comprovante: asset,
@@ -104,7 +107,7 @@ export default function DetalheTarefa({ task }: props) {
         status: 'pendente',
       };
 
-      await updateTask(task.id_tarefa, formData)
+      await updateTask(task.id_tarefa, formData);
 
       console.log('Enviando comprovante:', body);
       Toast.show({
@@ -209,7 +212,7 @@ export default function DetalheTarefa({ task }: props) {
           if (ehDono && task.status === 'recusada') {
             handleEnviarComprovante();
           } else if (temDono || task.status === 'pendente') {
-            abrirComprovante(task.comprovante);
+            abrirComprovante(task.comprovante || null);
           } else {
             handleEnviarComprovante();
           }
@@ -218,7 +221,7 @@ export default function DetalheTarefa({ task }: props) {
         <Text style={[styles.comprovanteText, { color: constantsUsed.text }]}>
           {constantsUsed.textButton}
         </Text>
-        <MaterialIcons name={constantsUsed.iconButton} size={18} color={constantsUsed.text} />
+        <MaterialIcons name={constantsUsed.iconButton as any} size={18} color={constantsUsed.text} />
       </TouchableOpacity>
 
       {task.id_usuario_atribuido !== user.id_usuario && task.status === 'pendente' && (
