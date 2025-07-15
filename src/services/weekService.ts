@@ -21,5 +21,9 @@ export const weekService = {
     return response.data;
   },
 
+  async ranking() {
+    const response = await api.get('/semana/ranking');
+    return response.data;
+  }
 
 };

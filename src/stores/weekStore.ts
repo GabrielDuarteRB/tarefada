@@ -6,14 +6,17 @@ import { UserLoginInterface } from '../types/User/UserLoginInterface';
 
 interface UseStore {
   week: {};
+  ranking: any[];
   currentWeek: () => Promise<void>;
   createWeek: (body: any) => Promise<void>;
   participatedWeek: (id: number) => Promise<void>;
   deleteCurrentWeek: () => Promise<void>;
+  getRanking: () => Promise<void>;
 }
 
 export const useWeekStore = create<UseStore>((set) => ({
   week: {},
+  ranking: [],
   currentWeek: async () => {
     const dados = await weekService.findCurrentWeek();
     set({ week: dados });
@@ -28,5 +31,9 @@ export const useWeekStore = create<UseStore>((set) => ({
   createWeek: async (body: any) => {
     const dados = await weekService.createWeek(body);
     set({ week: dados });
+  },
+  getRanking: async () => {
+    const dados = await weekService.ranking();
+    set({ ranking: dados });
   }
 }));
