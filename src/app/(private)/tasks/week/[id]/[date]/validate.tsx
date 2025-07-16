@@ -3,12 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 
-import Button from '../../../../../components/Button';
-import TasksListCarrossel from '../../../../../components/Tasks/ListCarrossel';
-import CardTaskValidate from '../../../../../components/Cards/Task/Validate';
-import Loader from '../../../../../components/Loader';
+import Button from '../../../../../../components/Button';
+import TasksListCarrossel from '../../../../../../components/Tasks/ListCarrossel';
+import CardTaskValidate from '../../../../../../components/Cards/Task/Validate';
+import Loader from '../../../../../../components/Loader';
 
-import { useTaskStore } from '../../../../../stores/taskStore';
+import { useTaskStore } from '../../../../../../stores/taskStore';
 
 export default function TasksValidate() {
   const { id, date } = useLocalSearchParams();

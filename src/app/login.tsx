@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useUserStore } from '../stores/userStore';
 import Loader from '../components/Loader';
 
 export default function LoginScreen() {
   const router = useRouter();
+  const navigation = useNavigation()
 
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');

@@ -2,9 +2,9 @@
   "expo": {
     "name": "tarefada",
     "slug": "tarefada",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/card.png",
     "scheme": "tarefada",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -17,11 +17,13 @@
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+          "foregroundImage": "./assets/images/card.png",
+          "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.gabrieldrb.tarefada"
     },
     "web": {
       "bundler": "metro",
@@ -33,6 +35,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "d758b8ea-d352-4524-86f0-8d7559a28ae0"
+      }
+    },
+    "owner": "gabrieldrb"
   }
 }

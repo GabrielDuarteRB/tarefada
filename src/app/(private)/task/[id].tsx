@@ -4,12 +4,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons, FontAwesome5 } from '@expo/vector-icons';
 
-import CardsInfoTask from '../../components/Cards/InfoTask';
-import ButtonSuccess from '../../components/Button/Success';
-import Button from '../../components/Button';
-import Loader from '../../components/Loader';
+import CardsInfoTask from '../../../components/Cards/InfoTask';
+import ButtonSuccess from '../../../components/Button/Success';
+import Button from '../../../components/Button';
+import Loader from '../../../components/Loader';
 
-import { useTaskStore } from '../../stores/taskStore';
+import { useTaskStore } from '../../../stores/taskStore';
 
 export default function DetalheTarefa() {
   const { id } = useLocalSearchParams();

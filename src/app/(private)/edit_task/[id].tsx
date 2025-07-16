@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from 'expo-router';
-import FormsTask from '../../components/Forms/Task';
-import { useWeekStore } from '../../stores/weekStore';
-import { useTaskStore } from '../../stores/taskStore';
+import FormsTask from '../../../components/Forms/Task';
+import { useWeekStore } from '../../../stores/weekStore';
+import { useTaskStore } from '../../../stores/taskStore';
 import Toast from 'react-native-toast-message';
-import Loader from '../../components/Loader';
+import Loader from '../../../components/Loader';
 import { useLocalSearchParams } from 'expo-router';
 
 export default function CreateTaks() {
