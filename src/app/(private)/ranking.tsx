@@ -4,9 +4,9 @@ import { useRouter, useNavigation } from 'expo-router';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 
-import { useWeekStore } from '../stores/weekStore';
+import { useWeekStore } from '../../stores/weekStore';
 
-import Loader from '../components/Loader';
+import Loader from '../../components/Loader';
 
 export default function ResultadoScreen() {
   const router = useRouter();

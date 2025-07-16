@@ -12,14 +12,15 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
 import { Link } from 'expo-router';
-import TasksCarrossel from '../../../../../components/Tasks/Carrossel';
-import TasksListCarrossel from '../../../../../components/Tasks/ListCarrossel';
-import AddTaskButton from '../../../../../components/Button/AddTask';
-import ValidateTasksButton from '../../../../../components/Button/ValidateTasksSimple';
-import CardTask from '../../../../../components/Cards/Task';
-import { useTaskStore } from '../../../../../stores/taskStore';
-import Loader from '../../../../../components/Loader';
-import { TaskInterface } from '../../../../../types/TaskInterface';
+import TasksCarrossel from '../../../../../../components/Tasks/Carrossel';
+import TasksListCarrossel from '../../../../../../components/Tasks/ListCarrossel';
+import AddTaskButton from '../../../../../../components/Button/AddTask';
+import ValidateTasksButton from '../../../../../../components/Button/ValidateTasks';
+import CardTask from '../../../../../../components/Cards/Task';
+import { useTaskStore } from '../../../../../../stores/taskStore';
+import Loader from '../../../../../../components/Loader';
+import { TaskInterface } from '../../../../../../types/TaskInterface';
+
 export default function Tasks() {
   const { id, date } = useLocalSearchParams();
 
@@ -130,7 +131,7 @@ export default function Tasks() {
           .replace(/^./, (c) => c.toUpperCase())}
       </Text>
 
-      
+
 
       <View style={styles.container}>
         {/* Checkbox para mostrar tarefas concluídas */}

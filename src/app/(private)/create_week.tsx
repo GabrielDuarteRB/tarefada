@@ -1,11 +1,11 @@
 import { useRef, useState,useEffect } from 'react';
 import { Animated, View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { Link } from 'expo-router';
-import ButtonSuccess from '../components/Button/Success';
-import TasksListCarrossel from '../components/Tasks/ListCarrossel';
-import CardTask from '../components/Cards/Task';
-import { useWeekStore } from '../stores/weekStore';
-import { useTaskStore } from '../stores/taskStore';
+import ButtonSuccess from '../../components/Button/Success';
+import TasksListCarrossel from '../../components/Tasks/ListCarrossel';
+import CardTask from '../../components/Cards/Task';
+import { useWeekStore } from '../../stores/weekStore';
+import { useTaskStore } from '../../stores/taskStore';
 
 const ITEM_HEIGHT = 80;
 
@@ -42,16 +42,6 @@ export default function CreateWeek() {
   return (
     <View>
       <Text style={styles.titulo}>Criar Semana</Text>
-
-
-      <View style={{backgroundColor: '#E0E0E0', padding: 20}}>
-
-        <TasksListCarrossel
-          tasks={tasks}
-          renderCard={(task) => (<CardTask title={task.titulo} />)}
-        />
-
-      </View>
 
       <View style={styles.buttonsContainer}>
 

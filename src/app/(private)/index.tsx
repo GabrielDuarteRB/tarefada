@@ -3,10 +3,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
 import { useRef, useState, useEffect, useCallback } from 'react';
-import CardWeek from '../components/Cards/Week';
-import { useWeekStore } from '../stores/weekStore';
-import { useTaskStore } from '../stores/taskStore';
-import Loader from '../components/Loader';
+import CardWeek from '../../components/Cards/Week';
+import { useWeekStore } from '../../stores/weekStore';
+import { useTaskStore } from '../../stores/taskStore';
+import Loader from '../../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -187,7 +187,7 @@ export default function Index() {
         </View>
 
       )}
-      
+
     </ScrollView>
     </View>
   );
