@@ -6,6 +6,7 @@ import {
   ViewStyle
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Platform } from 'react-native';
 
 type props = {
   onPress?: () => void;
@@ -17,7 +18,11 @@ export default function AddTaskButton({ onPress, style } : props) {
   return (
     <Pressable style={[styles.container, style]} onPress={onPress}>
       <View style={styles.iconContainer}>
-        <Ionicons name="add" size={20} color="white" />
+        <Ionicons 
+          name={Platform.OS === 'ios' ? 'add' : 'add'} 
+          size={20} 
+          color="white" 
+        />
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.textLine1}>adicionar</Text>
@@ -34,6 +39,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 12,
     backgroundColor: 'transparent',
+    minHeight: 48,
+    minWidth: 120,
   },
   iconContainer: {
     width: 32,
@@ -54,11 +61,15 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#000',
     lineHeight: 16,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   textLine2: {
     fontSize: 14,
     fontWeight: '500',
     color: '#000',
     lineHeight: 16,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
 }); 

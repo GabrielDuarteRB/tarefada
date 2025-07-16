@@ -15,7 +15,7 @@ import { Link } from 'expo-router';
 import TasksCarrossel from '../../../../../components/Tasks/Carrossel';
 import TasksListCarrossel from '../../../../../components/Tasks/ListCarrossel';
 import AddTaskButton from '../../../../../components/Button/AddTask';
-import ValidateTasksButton from '../../../../../components/Button/ValidateTasks';
+import ValidateTasksButton from '../../../../../components/Button/ValidateTasksSimple';
 import CardTask from '../../../../../components/Cards/Task';
 import { useTaskStore } from '../../../../../stores/taskStore';
 import Loader from '../../../../../components/Loader';
@@ -229,5 +229,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     gap: 16,
+    minHeight: 60,
+    backgroundColor: 'transparent',
   }
 });

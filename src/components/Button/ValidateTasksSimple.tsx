@@ -5,29 +5,27 @@ import {
   StyleSheet,
   ViewStyle
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Platform } from 'react-native';
 
 type props = {
   onPress?: () => void;
   style?: ViewStyle | ViewStyle[];
 };
 
-export default function ValidateTasksButton({ onPress, style } : props) {
+export default function ValidateTasksSimpleButton({ onPress, style } : props) {
 
   return (
-    <Pressable style={[styles.container, style]} onPress={onPress}>
+    <Pressable 
+      style={[styles.container, style]} 
+      onPress={onPress}
+      android_ripple={{ color: '#E0E0E0' }}
+    >
       <View style={styles.contentContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.textLine1}>tarefas</Text>
           <Text style={styles.textLine2}>a validar</Text>
         </View>
         <View style={styles.iconContainer}>
-          <Ionicons 
-            name={Platform.OS === 'ios' ? 'checkmark' : 'checkmark'} 
-            size={18} 
-            color="white" 
-          />
+          <Text style={styles.fallbackIcon}>✓</Text>
         </View>
       </View>
     </Pressable>
@@ -44,6 +42,7 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
     minHeight: 48,
     minWidth: 120,
+    elevation: 2,
   },
   contentContainer: {
     flexDirection: 'row',
@@ -59,16 +58,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#000',
     lineHeight: 16,
-    includeFontPadding: false,
-    textAlignVertical: 'center',
   },
   textLine2: {
     fontSize: 14,
     fontWeight: '500',
     color: '#000',
     lineHeight: 16,
-    includeFontPadding: false,
-    textAlignVertical: 'center',
   },
   iconContainer: {
     width: 28,
@@ -78,5 +73,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
+  },
+  fallbackIcon: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 }); 
