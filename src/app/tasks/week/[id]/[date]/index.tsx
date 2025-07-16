@@ -14,7 +14,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { Link } from 'expo-router';
 import TasksCarrossel from '../../../../../components/Tasks/Carrossel';
 import TasksListCarrossel from '../../../../../components/Tasks/ListCarrossel';
-import ButtonSuccess from '../../../../../components/Button/Success';
+import AddTaskButton from '../../../../../components/Button/AddTask';
+import ValidateTasksButton from '../../../../../components/Button/ValidateTasks';
 import CardTask from '../../../../../components/Cards/Task';
 import { useTaskStore } from '../../../../../stores/taskStore';
 import Loader from '../../../../../components/Loader';
@@ -29,7 +30,7 @@ export default function Tasks() {
   const [loading, setLoading] = useState(true);
   const [showCompleted, setShowCompleted] = useState(false);
 
-  const handleExcluir = (taskId) =>  {
+  const handleExcluir = (taskId: number | null) =>  {
       Alert.alert(
         'Confirmar exclusão',
         'Tem certeza que deseja excluir esta tarefa?',
@@ -84,13 +85,11 @@ export default function Tasks() {
 
         <View style={ styles.buttonContainer }>
         <Link href={`/create_task?date=${date}`} asChild>
-          <Pressable android_ripple={{ color: '#ddd' }} style={ styles.button }>
-            <Text style={{color: 'white'}} >Adicionar Tarefa</Text>
-          </Pressable>
+          <AddTaskButton />
         </Link>
 
         <Link href={`/tasks/week/${id}/${date}/validate`} asChild>
-            <ButtonSuccess text="Tarefas a validar" />
+            <ValidateTasksButton />
         </Link>
       </View>
       </View>
@@ -112,12 +111,10 @@ export default function Tasks() {
         </Text>
         <View style={ styles.buttonContainer }>
           <Link href={`/create_task?date=${date}`} asChild>
-            <Pressable android_ripple={{ color: '#ddd' }} style={ styles.button }>
-              <Text style={{color: 'white'}} >Adicionar Tarefa</Text>
-            </Pressable>
+            <AddTaskButton />
           </Link>
           <Link href={`/tasks/week/${id}/${date}/validate`} asChild>
-            <ButtonSuccess text="Tarefas a validar" />
+            <ValidateTasksButton />
           </Link>
         </View>
       </View>
@@ -179,13 +176,11 @@ export default function Tasks() {
 
       <View style={ styles.buttonContainer }>
         <Link href={`/create_task?date=${date}`} asChild>
-          <Pressable android_ripple={{ color: '#ddd' }} style={ styles.button }>
-            <Text style={{color: 'white'}} >Adicionar Tarefa</Text>
-          </Pressable>
+          <AddTaskButton />
         </Link>
 
         <Link href={`/tasks/week/${id}/${date}/validate`} asChild>
-            <ButtonSuccess text="Tarefas a validar" />
+            <ValidateTasksButton />
         </Link>
       </View>
     </ScrollView>
@@ -230,16 +225,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  button: {
     alignItems: 'center',
-    borderRadius: 8,
-    backgroundColor: '#007AFF',
-    marginLeft: 20,
-    marginTop: 20,
-    padding: 14,
-    width: '40%',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    gap: 16,
   }
 });
