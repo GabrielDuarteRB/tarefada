@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert,  } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { TaskInterface } from '../../types/TaskInterface';
 import * as ImagePicker from 'expo-image-picker';
@@ -10,6 +10,8 @@ import * as FileSystem from 'expo-file-system';
 import Toast from 'react-native-toast-message';
 import * as Sharing from 'expo-sharing';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ValidateOkButton from '../Button/ValidateOk';
+import ValidateNoButton from '../Button/ValidateNo';
 
 type props = {
   task: TaskInterface
@@ -184,86 +186,88 @@ export default function DetalheTarefa({ task }: props) {
   }
 
   return (
-    <SafeAreaView
-      style={[
-        styles.card,
-        {
-          backgroundColor: constantsUsed.bodyCard,
-          borderColor: constantsUsed.borderCard,
-        }
-      ]}
-    >
-      <View style={styles.cardHeader}>
-        <Text style={[styles.cardTitle, { color: constantsUsed.text }]}>{task.titulo}</Text>
-        <View style={{ alignItems: 'center' }}>
-          <Text style={[styles.cardNumero, { color: constantsUsed.text }]}>{task.id_tarefa}</Text>
-          <Text style={[styles.spade, { color: constantsUsed.text }]}>♠</Text>
-        </View>
-      </View>
-
-      <Text style={[styles.cardText, { color: constantsUsed.text }]}>Dia: {formatarDataBR(task.data_inicio)}</Text>
-      <Text style={[styles.cardText, { color: constantsUsed.text }]}>Status: {task.status}</Text>
-      <Text style={[styles.cardText, { color: constantsUsed.text }]}>
-        Atribuído:{' '}
-        {task.id_usuario_atribuido === null || task.id_usuario_atribuido === undefined
-          ? 'Sem atribuição'
-          : task.id_usuario_atribuido === user.id_usuario
-          ? 'Esta tarefa é sua'
-          : 'Pertence a outro participante'}
-      </Text>
-
-      <View style={[styles.cardDivider, { borderBottomColor: constantsUsed.text }]} />
-
-      <TouchableOpacity
+    <ScrollView style={styles.container}>
+      <SafeAreaView
         style={[
-          styles.comprovanteBtn,
-          { backgroundColor: constantsUsed.borderCard }
-        ]}
-        onPress={() => {
-          if (ehDono && task.status === 'recusada') {
-            handleEnviarComprovante();
-          } else if (temDono || task.status === 'pendente') {
-            abrirComprovante(task.comprovante || null);
-          } else {
-            handleEnviarComprovante();
+          styles.card,
+          {
+            backgroundColor: constantsUsed.bodyCard,
+            borderColor: constantsUsed.borderCard,
           }
-        }}
-        disabled={isUploading}
+        ]}
       >
-        <Text style={[styles.comprovanteText, { color: constantsUsed.text }]}>
-          {constantsUsed.textButton}
+        <View style={styles.cardHeader}>
+          <Text style={[styles.cardTitle, { color: constantsUsed.text }]}>{task.titulo}</Text>
+          <View style={{ alignItems: 'center' }}>
+            <Text style={[styles.cardNumero, { color: constantsUsed.text }]}>{task.id_tarefa}</Text>
+            <Text style={[styles.spade, { color: constantsUsed.text }]}>♠</Text>
+          </View>
+        </View>
+
+        <Text style={[styles.cardText, { color: constantsUsed.text }]}>Dia: {formatarDataBR(task.data_inicio)}</Text>
+        <Text style={[styles.cardText, { color: constantsUsed.text }]}>Status: {task.status}</Text>
+        <Text style={[styles.cardText, { color: constantsUsed.text }]}>
+          Atribuído:{' '}
+          {task.id_usuario_atribuido === null || task.id_usuario_atribuido === undefined
+            ? 'Sem atribuição'
+            : task.id_usuario_atribuido === user.id_usuario
+            ? 'Esta tarefa é sua'
+            : 'Pertence a outro participante'}
         </Text>
-        <MaterialIcons name={constantsUsed.iconButton as any} size={18} color={constantsUsed.text} />
-      </TouchableOpacity>
 
+        <View style={[styles.cardDivider, { borderBottomColor: constantsUsed.text }]} />
+
+        <TouchableOpacity
+          style={[
+            styles.comprovanteBtn,
+            { backgroundColor: constantsUsed.borderCard }
+          ]}
+          onPress={() => {
+            if (ehDono && task.status === 'recusada') {
+              handleEnviarComprovante();
+            } else if (temDono || task.status === 'pendente') {
+              abrirComprovante(task.comprovante || null);
+            } else {
+              handleEnviarComprovante();
+            }
+          }}
+          disabled={isUploading}
+        >
+          <Text style={[styles.comprovanteText, { color: constantsUsed.text }]}>
+            {constantsUsed.textButton}
+          </Text>
+          <MaterialIcons name={constantsUsed.iconButton as any} size={18} color={constantsUsed.text} />
+        </TouchableOpacity>
+      </SafeAreaView>
+
+      {/* Botões de validação fora do card */}
       {task.id_usuario_atribuido !== user.id_usuario && task.status === 'pendente' && (
-        <>
-          <TouchableOpacity
-            style={[styles.aceitarBtn, { backgroundColor: '#4CAF50' }]}
+        <View style={styles.validationButtonsContainer}>
+          <ValidateOkButton
             onPress={() => handleAceitarOuRecusarTarefa('concluida', 'Tarefa aceita com sucesso! 👏')}
-          >
-            <Text style={styles.aceitarText}>Aceitar Tarefa</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.recusarBtn, { backgroundColor: '#D32F2F', marginTop: 10 }]}
+          />
+          <ValidateNoButton
             onPress={() => handleAceitarOuRecusarTarefa('recusada', 'Tarefa recusada com sucesso!')}
-          >
-            <Text style={styles.recusarText}>Recusar Tarefa</Text>
-          </TouchableOpacity>
-        </>
+          />
+        </View>
       )}
-    <Toast />
-    </SafeAreaView>
+      
+      <Toast />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
   card: {
     borderWidth: 3,
     borderRadius: 12,
     justifyContent: 'space-between',
     marginTop: 10,
+    marginHorizontal: 20,
     minHeight: 450,
     padding: 16,
   },
@@ -300,38 +304,8 @@ const styles = StyleSheet.create({
   comprovanteText: {
     fontWeight: 'bold',
   },
-  enviarBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 14,
-    borderRadius: 6,
-    borderWidth: 2,
-  },
-  enviarText: {
-    fontWeight: 'bold',
-    marginRight: 8,
-  },
-  aceitarBtn: {
-    padding: 16,
-    borderRadius: 6,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  aceitarText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  recusarBtn: {
-    padding: 16,
-    borderRadius: 6,
-    alignItems: 'center',
-  },
-
-  recusarText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
+  validationButtonsContainer: {
+    marginTop: 20,
+    marginBottom: 20,
   },
 });
